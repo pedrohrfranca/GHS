@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grupo Hiper Saúde — Resultados de Mídia H1 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <style>
+    :root {
+      --hiper-red: #D73027;
+      --hiper-blue: #3D5DA9;
+      --hiper-blue-light: #5A7BC4;
+      --hiper-gray: #4F4F4F;
+      --hiper-gray-muted: #7A7A7A;
+      --hiper-gray-light: #A8A8A8;
+      --bg: #FFFFFF;
+      --surface: #F8F9FB;
+      --surface-2: #EEF1F6;
+      --border: rgba(79, 79, 79, 0.12);
+      --text: #4F4F4F;
+      --text-muted: #7A7A7A;
+      --accent: #3D5DA9;
+      --accent-2: #D73027;
+      --warning: #C45A20;
+      --danger: #D73027;
+      --success: #3D5DA9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito Sans', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .deck {
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 48px 64px 80px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+    }
+
+    .brand {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hiper-blue);
+      font-weight: 700;
+    }
+
+    .brand-accent {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-accent::before {
+      content: '';
+      width: 24px;
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+    }
+
+    .logo {
+      height: 56px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .logo-lg {
+      height: 88px;
+      margin-bottom: 8px;
+    }
+
+    .slide-logo {
+      position: absolute;
+      top: 48px;
+      right: 64px;
+      height: 40px;
+      opacity: 0.95;
+    }
+
+    .slide:not(.title-slide) {
+      position: absolute;
+    }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-top: 6px;
+      color: var(--hiper-gray);
+    }
+
+    .slide-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .period-badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--hiper-blue);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Title slide */
+    .title-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .title-slide .hero-title {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 800px;
+      color: var(--hiper-gray);
+    }
+
+    .title-slide .hero-title span { color: var(--hiper-blue); }
+
+    .title-slide .hero-meta {
+      margin-top: 24px;
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .title-line {
+      width: 120px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+      margin: 28px auto;
+    }
+
+    /* KPI grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      flex: 1;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .kpi-card.highlight {
+      border-color: rgba(61, 93, 169, 0.35);
+      background: linear-gradient(160deg, rgba(61,93,169,0.06) 0%, var(--surface) 60%);
+      border-top: 3px solid var(--hiper-blue);
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 12px 0 8px;
+      color: var(--hiper-gray);
+    }
+
+    .kpi-card.highlight .kpi-value { color: var(--hiper-blue); }
+
+    .kpi-detail {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .kpi-trend {
+      font-size: 12px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    .trend-up { color: var(--hiper-blue); }
+    .trend-down { color: var(--hiper-red); }
+    .trend-neutral { color: var(--warning); }
+
+    /* Charts layout */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .charts-row.three-cols {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .charts-row.three-cols .chart-wrap {
+      min-height: 260px;
+    }
+
+    .chart-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .chart-panel h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--hiper-gray);
+    }
+
+    .chart-caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .chart-wrap {
+      flex: 1;
+      position: relative;
+      min-height: 220px;
+    }
+
+    /* Month selector */
+    .month-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .month-tab {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .month-tab:hover { border-color: rgba(61,93,169,0.4); color: var(--hiper-gray); }
+
+    .month-tab.active {
+      background: rgba(61, 93, 169, 0.1);
+      border-color: var(--hiper-blue);
+      color: var(--hiper-blue);
+      font-weight: 700;
+    }
+
+    .month-tab.semestre.active {
+      background: rgba(215, 48, 39, 0.08);
+      border-color: var(--hiper-red);
+      color: var(--hiper-red);
+    }
+
+    /* Funnel */
+    .funnel-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 20px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .funnel-right {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 0;
+    }
+
+    .funnel-right .chart-panel {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .funnel-right .chart-wrap {
+      min-height: 150px;
+    }
+
+    .funnel-viz {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .funnel-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .funnel-bar-wrap {
+      flex: 1;
+      height: 44px;
+      background: var(--surface-2);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .funnel-bar {
+      height: 100%;
+      background: var(--hiper-blue);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      transition: width 0.5s ease;
+      min-width: fit-content;
+    }
+
+    .funnel-step:nth-child(3) .funnel-bar { background: var(--hiper-red); }
+    .funnel-step:nth-child(4) .funnel-bar { background: var(--hiper-blue-light); }
+    .funnel-step:nth-child(5) .funnel-bar { background: var(--hiper-gray); }
+
+    .funnel-label {
+      width: 158px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.3;
+    }
+
+    .funnel-rate {
+      width: 72px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--hiper-blue);
+      text-align: right;
+    }
+
+    .funnel-step:nth-child(3) .funnel-rate { color: var(--hiper-red); }
+    .funnel-step:nth-child(4) .funnel-rate { color: var(--hiper-blue-light); }
+
+    .funnel-rate-dual {
+      width: 96px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: flex-end;
+    }
+
+    .funnel-rate-dual .rate-line {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--hiper-gray);
+      line-height: 1.2;
+    }
+
+    .funnel-rate-dual .rate-tag {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .funnel-summary {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .funnel-summary-item {
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .funnel-summary-item .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .funnel-summary-item .value {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--hiper-gray);
+    }
+
+    .funnel-summary-item.highlight .value { color: var(--hiper-red); }
+
+    /* Table */
+    .data-table-wrap {
+      flex: 1;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      padding: 12px 16px 16px;
+    }
+
+    #kpi-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      font-size: 14px;
+    }
+
+    #kpi-table th,
+    #kpi-table td {
+      padding: 16px 18px;
+      text-align: right;
+      border: none;
+    }
+
+    #kpi-table th:first-child,
+    #kpi-table td:first-child {
+      text-align: left;
+      padding-left: 20px;
+    }
+
+    #kpi-table th:last-child,
+    #kpi-table td:last-child {
+      padding-right: 20px;
+    }
+
+    #kpi-table thead th {
+      background: transparent;
+      color: var(--hiper-gray);
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      position: sticky;
+      top: 0;
+      padding-top: 8px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    #kpi-table tbody tr {
+      transition: background 0.15s ease;
+    }
+
+    #kpi-table tbody tr.row-odd td {
+      background: #FFFFFF;
+    }
+
+    #kpi-table tbody tr.row-even td {
+      background: var(--surface);
+    }
+
+    #kpi-table tbody tr:hover td {
+      background: rgba(61, 93, 169, 0.08);
+    }
+
+    #kpi-table tbody td:first-child {
+      border-radius: 8px 0 0 8px;
+    }
+
+    #kpi-table tbody td:last-child {
+      border-radius: 0 8px 8px 0;
+    }
+
+    #kpi-table td.metric-name {
+      color: var(--hiper-gray);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    #kpi-table td.col-total {
+      font-weight: 800;
+      color: var(--hiper-blue);
+      background: rgba(61, 93, 169, 0.06) !important;
+    }
+
+    #kpi-table tbody tr:hover td.col-total {
+      background: rgba(61, 93, 169, 0.12) !important;
+    }
+
+    .footnote {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 12px;
+    }
+
+    /* Navigation */
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(255,255,255,0.97);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+    }
+
+    .nav-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+    }
+
+    .nav-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-dot.active {
+      background: var(--hiper-blue);
+      border-color: var(--hiper-blue);
+      transform: scale(1.25);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--hiper-gray);
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--hiper-blue);
+      color: var(--hiper-blue);
+      background: rgba(61, 93, 169, 0.06);
+    }
+    .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .slide-counter {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .keyboard-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    @media (max-width: 1200px) {
+      .slide { padding: 32px 32px 80px; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .charts-row, .charts-row.three-cols, .funnel-layout, .funnel-right { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- Slide 1: Capa -->
+    <section class="slide title-slide active" data-slide="0">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="logo logo-lg">
+      <div class="title-line"></div>
+      <h1 class="hero-title">Resultados de <span>Mídia Digital</span></h1>
+      <p class="hero-meta">1º Semestre 2026 · Janeiro a Junho</p>
+      <p class="hero-meta" style="margin-top:8px; font-size:14px;">Apresentação Executiva · Diretoria</p>
+    </section>
+
+    <!-- Slide 2: Volume -->
+    <section class="slide" data-slide="1">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Volume do Funil</div>
+          <h2 class="slide-title">Leads, reuniões e conversões por mês</h2>
+          <p class="slide-subtitle">Evolução mensal do pipeline comercial</p>
+        </div>
+      </div>
+      <div class="charts-row three-cols">
+        <div class="chart-panel">
+          <h3>Leads gerados</h3>
+          <p class="chart-caption">Volume mensal · unidades</p>
+          <div class="chart-wrap"><canvas id="chartLeads"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <h3>Reuniões agendadas</h3>
+          <p class="chart-caption">Volume mensal · unidades</p>
+          <div class="chart-wrap"><canvas id="chartReunioes"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <h3>Conversões</h3>
+          <p class="chart-caption">Ganhos digitais · unidades</p>
+          <div class="chart-wrap"><canvas id="chartConversoes"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Custos -->
+    <section class="slide" data-slide="2">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Eficiência de Investimento</div>
+          <h2 class="slide-title">CPL médio e CAC/CPA</h2>
+          <p class="slide-subtitle">Evolução mensal dos custos unitários de aquisição</p>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-panel">
+          <h3>CPL médio</h3>
+          <p class="chart-caption">Custo por lead · R$ (BRL)</p>
+          <div class="chart-wrap"><canvas id="chartCpl"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <h3>CAC/CPA</h3>
+          <p class="chart-caption">Custo por aquisição · R$ (BRL)</p>
+          <div class="chart-wrap"><canvas id="chartCac"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Funil -->
+    <section class="slide" data-slide="3">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Taxas de Conversão</div>
+          <h2 class="slide-title">Funil completo de conversão</h2>
+          <p class="slide-subtitle">Do lead à venda — incluindo reuniões realizadas e taxas por etapa</p>
+        </div>
+      </div>
+      <div class="month-tabs" id="funnel-tabs"></div>
+      <div class="funnel-layout">
+        <div class="funnel-viz" id="funnel-viz"></div>
+        <div class="funnel-right">
+          <div class="chart-panel">
+            <h3>Agendadas vs Realizadas</h3>
+            <p class="chart-caption">Volume mensal · comparativo de comparecimento</p>
+            <div class="chart-wrap"><canvas id="chartAgendReal"></canvas></div>
+          </div>
+          <div class="chart-panel">
+            <h3>Evolução Realizada → Venda</h3>
+            <p class="chart-caption">Performance mensal do time comercial · % sobre reuniões realizadas</p>
+            <div class="chart-wrap"><canvas id="chartTaxaRealVenda"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <p class="footnote">Taxa Realizada → Venda calculada sobre reuniões efetivamente realizadas (319 no semestre)</p>
+    </section>
+
+    <!-- Slide 5: Tabela -->
+    <section class="slide" data-slide="4">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Dados Detalhados</div>
+          <h2 class="slide-title">Tabela completa de KPIs</h2>
+          <p class="slide-subtitle">Todos os indicadores por mês — Jan a Jun 2026</p>
+        </div>
+      </div>
+      <div class="data-table-wrap">
+        <table id="kpi-table">
+          <thead>
+            <tr>
+              <th>Métrica</th>
+              <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
+              <th>Total / Média</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="nav-bar">
+    <span class="keyboard-hint">← → ou clique para navegar · F11 para tela cheia</span>
+    <div class="nav-dots" id="nav-dots"></div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span class="slide-counter" id="slide-counter">1 / 5</span>
+      <div class="nav-buttons">
+        <button class="nav-btn" id="btn-prev" disabled>Anterior</button>
+        <button class="nav-btn" id="btn-next">Próximo</button>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+
+    const DATA = {
+      leads: [1521, 1212, 540, 829, 845, 642],
+      reunioesAgendadas: [49, 73, 91, 124, 83, 83],
+      reunioesRealizadas: [30, 44, 70, 64, 51, 60],
+      conversoes: [6, 12, 10, 6, 9, 5],
+      investimento: [27646, 20900, 26363, 25344, 28811, 28785],
+      cpl: [18.18, 17.24, 46.93, 33.71, 34.17, 44.84],
+      custoSQL: [921.53, 286.30, 278.50, 225.40, 347.00, 346.80],
+      cac: [4607, 1742, 2534, 4658, 3201, 5757],
+      taxaLeadReuniao: [3.2, 6.0, 16.9, 15.0, 9.8, 12.9],
+      taxaReuniaoVenda: [12.2, 16.4, 11.0, 4.8, 10.8, 8.3],
+      taxaLeadVenda: [0.4, 1.0, 1.9, 0.7, 1.1, 0.78]
+    };
+
+    const sum = arr => arr.reduce((a, b) => a + b, 0);
+    const avg = arr => sum(arr) / arr.length;
+    const fmt = n => n.toLocaleString('pt-BR');
+    const fmtBRL = n => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const fmtBRLDec = n => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const totals = {
+      leads: sum(DATA.leads),
+      reunioes: sum(DATA.reunioesAgendadas),
+      realizadas: sum(DATA.reunioesRealizadas),
+      conversoes: sum(DATA.conversoes),
+      investimento: sum(DATA.investimento),
+      cpl: sum(DATA.investimento) / sum(DATA.leads),
+      cac: sum(DATA.investimento) / sum(DATA.conversoes),
+      taxaLeadReuniao: avg(DATA.taxaLeadReuniao),
+      taxaLeadVenda: avg(DATA.taxaLeadVenda)
+    };
+
+    DATA.taxaAgendReal = DATA.reunioesRealizadas.map((r, i) =>
+      +(r / DATA.reunioesAgendadas[i] * 100).toFixed(1)
+    );
+    DATA.taxaRealVenda = DATA.reunioesRealizadas.map((r, i) =>
+      +(DATA.conversoes[i] / r * 100).toFixed(1)
+    );
+
+    const mediaTaxaRealVenda = +(totals.conversoes / totals.realizadas * 100).toFixed(1);
+
+    // Chart defaults
+    Chart.defaults.color = '#7A7A7A';
+    Chart.defaults.borderColor = 'rgba(79, 79, 79, 0.08)';
+    Chart.defaults.font.family = "'Nunito Sans', 'Segoe UI', system-ui, sans-serif";
+
+    const chartColors = {
+      blue: '#3D5DA9',
+      red: '#D73027',
+      blueLight: '#5A7BC4',
+      blueFill: 'rgba(61, 93, 169, 0.12)',
+      redFill: 'rgba(215, 48, 39, 0.1)',
+      muted: 'rgba(122, 122, 122, 0.35)'
+    };
+
+    const gridColor = 'rgba(79, 79, 79, 0.08)';
+
+    Chart.register(ChartDataLabels);
+
+    const labelFont = {
+      weight: '700',
+      size: 11,
+      family: "'Nunito Sans', 'Segoe UI', system-ui, sans-serif"
+    };
+
+    const labelBase = {
+      color: '#4F4F4F',
+      font: labelFont,
+      clamp: true,
+      clip: false
+    };
+
+    const barLabelPlugin = (formatter, options = {}) => ({
+      datalabels: {
+        ...labelBase,
+        anchor: 'end',
+        align: 'top',
+        offset: 4,
+        formatter,
+        font: { ...labelFont, size: options.size || 11 },
+        ...options
+      }
+    });
+
+    const lineLabelPlugin = (formatter, alignments) => ({
+      datalabels: {
+        ...labelBase,
+        anchor: 'end',
+        align: (ctx) => alignments[ctx.datasetIndex] || 'top',
+        offset: (ctx) => (alignments[ctx.datasetIndex] === 'bottom' ? 6 : 4),
+        formatter
+      }
+    });
+
+    const chartLayout = { padding: { top: 28, left: 4, right: 8 } };
+
+    let currentSlide = 0;
+    let selectedMonth = 'semestre';
+    let charts = {};
+    const totalSlides = 5;
+
+    function createVolumeBarLineChart(canvasId, label, data, barColor, lineColor, maxFactor = 1.15) {
+      return new Chart(document.getElementById(canvasId), {
+        type: 'bar',
+        data: {
+          labels: MESES,
+          datasets: [
+            {
+              type: 'bar',
+              label,
+              data,
+              backgroundColor: barColor,
+              borderRadius: 4,
+              order: 2
+            },
+            {
+              type: 'line',
+              label: 'Evolução',
+              data,
+              borderColor: lineColor,
+              backgroundColor: 'transparent',
+              borderWidth: 2.5,
+              tension: 0.35,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              pointBackgroundColor: '#fff',
+              pointBorderColor: lineColor,
+              pointBorderWidth: 2,
+              order: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 36, left: 4, right: 8 } },
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              ...labelBase,
+              display: ctx => ctx.datasetIndex === 0,
+              anchor: 'end',
+              align: 'top',
+              offset: 4,
+              formatter: v => fmt(v),
+              font: { ...labelFont, size: 12 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              suggestedMax: Math.max(...data) * maxFactor
+            },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A' } }
+          }
+        }
+      });
+    }
+
+    function initCharts() {
+      charts.leads = createVolumeBarLineChart(
+        'chartLeads', 'Leads', DATA.leads, chartColors.blue, '#2A4478'
+      );
+
+      charts.reunioes = createVolumeBarLineChart(
+        'chartReunioes', 'Reuniões agendadas', DATA.reunioesAgendadas, chartColors.blue, '#2A4478', 1.18
+      );
+
+      charts.conversoes = createVolumeBarLineChart(
+        'chartConversoes', 'Conversões', DATA.conversoes, chartColors.red, '#8B1A14', 1.35
+      );
+
+      charts.cpl = new Chart(document.getElementById('chartCpl'), {
+        type: 'bar',
+        data: {
+          labels: MESES,
+          datasets: [{
+            label: 'CPL médio',
+            data: DATA.cpl,
+            backgroundColor: chartColors.blue,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 32, left: 4, right: 8 } },
+          plugins: {
+            legend: { display: false },
+            ...barLabelPlugin(v => 'R$ ' + v.toFixed(2).replace('.', ','), { size: 12 })
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              suggestedMax: Math.max(...DATA.cpl) * 1.18,
+              ticks: { callback: v => 'R$ ' + v.toFixed(0) }
+            },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A' } }
+          }
+        }
+      });
+
+      charts.cac = new Chart(document.getElementById('chartCac'), {
+        type: 'bar',
+        data: {
+          labels: MESES,
+          datasets: [{
+            label: 'CAC/CPA',
+            data: DATA.cac,
+            backgroundColor: chartColors.red,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 32, left: 4, right: 8 } },
+          plugins: {
+            legend: { display: false },
+            ...barLabelPlugin(v => 'R$ ' + fmt(v), { size: 12 })
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              suggestedMax: Math.max(...DATA.cac) * 1.18,
+              ticks: { callback: v => 'R$ ' + v.toLocaleString('pt-BR') }
+            },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A' } }
+          }
+        }
+      });
+
+      charts.agendReal = new Chart(document.getElementById('chartAgendReal'), {
+        type: 'bar',
+        data: {
+          labels: MESES,
+          datasets: [
+            {
+              label: 'Agendadas',
+              data: DATA.reunioesAgendadas,
+              backgroundColor: chartColors.red,
+              borderRadius: 4
+            },
+            {
+              label: 'Realizadas',
+              data: DATA.reunioesRealizadas,
+              backgroundColor: chartColors.blue,
+              borderRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 28, left: 4, right: 8 } },
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { size: 11, weight: '600' } } },
+            datalabels: {
+              ...labelBase,
+              anchor: 'end',
+              align: 'top',
+              offset: 2,
+              font: { ...labelFont, size: 10 },
+              formatter: v => fmt(v)
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              suggestedMax: Math.max(...DATA.reunioesAgendadas) * 1.2
+            },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A' } }
+          }
+        }
+      });
+
+      charts.taxaRealVenda = new Chart(document.getElementById('chartTaxaRealVenda'), {
+        type: 'line',
+        data: {
+          labels: MESES,
+          datasets: [
+            {
+              label: 'Realizada → Venda',
+              data: DATA.taxaRealVenda,
+              borderColor: chartColors.red,
+              backgroundColor: chartColors.redFill,
+              fill: true,
+              tension: 0.3,
+              pointRadius: 6,
+              pointBackgroundColor: chartColors.red,
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              borderWidth: 2.5
+            },
+            {
+              label: `Média semestre (${mediaTaxaRealVenda.toString().replace('.', ',')}%)`,
+              data: MESES.map(() => mediaTaxaRealVenda),
+              borderColor: chartColors.muted,
+              borderDash: [6, 4],
+              borderWidth: 1.5,
+              pointRadius: 0,
+              fill: false,
+              tension: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 32, left: 4, right: 8 } },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 12, padding: 12, font: { size: 11, weight: '600' } }
+            },
+            datalabels: {
+              ...labelBase,
+              display: ctx => ctx.datasetIndex === 0,
+              anchor: 'end',
+              align: 'top',
+              offset: 6,
+              font: { ...labelFont, size: 12 },
+              color: chartColors.red,
+              formatter: v => v.toFixed(1).replace('.', ',') + '%'
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  if (ctx.datasetIndex === 0) {
+                    const i = ctx.dataIndex;
+                    return ` ${DATA.conversoes[i]} vendas / ${DATA.reunioesRealizadas[i]} realizadas (${ctx.formattedValue}%)`;
+                  }
+                  return ` Média semestre: ${mediaTaxaRealVenda.toString().replace('.', ',')}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              suggestedMax: Math.max(...DATA.taxaRealVenda, mediaTaxaRealVenda) * 1.2,
+              ticks: { callback: v => v + '%' }
+            },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A', font: { weight: '600' } } }
+          }
+        }
+      });
+    }
+
+    function renderFunnelTabs() {
+      const tabs = document.getElementById('funnel-tabs');
+      const items = [{ id: 'semestre', label: 'Semestre' }, ...MESES.map((m, i) => ({ id: i, label: m }))];
+      tabs.innerHTML = items.map(item => `
+        <button class="month-tab ${item.id === 'semestre' ? 'semestre' : ''} ${item.id === selectedMonth ? 'active' : ''}"
+          data-month="${item.id}">${item.label}</button>
+      `).join('');
+
+      tabs.querySelectorAll('.month-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedMonth = btn.dataset.month === 'semestre' ? 'semestre' : parseInt(btn.dataset.month);
+          tabs.querySelectorAll('.month-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderFunnel();
+        });
+      });
+    }
+
+    function renderFunnel() {
+      let leads, reunioes, realizadas, vendas, tLR, tAR, tRV, tLV, noShow;
+
+      if (selectedMonth === 'semestre') {
+        leads = totals.leads;
+        reunioes = totals.reunioes;
+        realizadas = totals.realizadas;
+        vendas = totals.conversoes;
+        tLR = +(totals.reunioes / totals.leads * 100).toFixed(1);
+        tAR = +(totals.realizadas / totals.reunioes * 100).toFixed(1);
+        tRV = +(totals.conversoes / totals.realizadas * 100).toFixed(1);
+        tLV = +(totals.conversoes / totals.leads * 100).toFixed(2);
+        noShow = reunioes - realizadas;
+      } else {
+        const i = selectedMonth;
+        leads = DATA.leads[i];
+        reunioes = DATA.reunioesAgendadas[i];
+        realizadas = DATA.reunioesRealizadas[i];
+        vendas = DATA.conversoes[i];
+        tLR = DATA.taxaLeadReuniao[i];
+        tAR = DATA.taxaAgendReal[i];
+        tRV = DATA.taxaRealVenda[i];
+        tLV = DATA.taxaLeadVenda[i];
+        noShow = reunioes - realizadas;
+      }
+
+      const maxVal = leads;
+      const pct = v => Math.max(10, (v / maxVal) * 100);
+
+      document.getElementById('funnel-viz').innerHTML = `
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--hiper-blue);margin-bottom:4px;">
+          Funil ${selectedMonth === 'semestre' ? '— Semestre' : '— ' + MESES[selectedMonth] + ' 2026'}
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Leads gerados</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:${pct(leads)}%">${fmt(leads)}</div>
+          </div>
+          <div class="funnel-rate">100%</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Reuniões agendadas</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:${pct(reunioes)}%">${fmt(reunioes)}</div>
+          </div>
+          <div class="funnel-rate">${tLR.toFixed(1)}%</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Reuniões realizadas</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:${pct(realizadas)}%">${fmt(realizadas)}</div>
+          </div>
+          <div class="funnel-rate">${tAR.toFixed(1)}%</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Conversões (vendas)</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:${pct(vendas)}%">${fmt(vendas)}</div>
+          </div>
+          <div class="funnel-rate-dual">
+            <div class="rate-line">${Number(tLV).toFixed(2).replace('.', ',')}% <span class="rate-tag">lead</span></div>
+            <div class="rate-line">${tRV.toFixed(1).replace('.', ',')}% <span class="rate-tag">realiz.</span></div>
+          </div>
+        </div>
+        <div class="funnel-summary">
+          <div class="funnel-summary-item highlight">
+            <div class="label">No-show (não compareceu)</div>
+            <div class="value">${fmt(noShow)} leads</div>
+          </div>
+          <div class="funnel-summary-item">
+            <div class="label">Taxa Realizada → Venda</div>
+            <div class="value">${tRV.toFixed(1).replace('.', ',')}%</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTable() {
+      const rows = [
+        { name: 'Leads Gerados', values: DATA.leads, total: fmt(totals.leads), isMoney: false },
+        { name: 'Reuniões Agendadas', values: DATA.reunioesAgendadas, total: fmt(totals.reunioes), isMoney: false },
+        { name: 'Reuniões Realizadas', values: DATA.reunioesRealizadas, total: fmt(totals.realizadas), isMoney: false },
+        { name: 'Conversões (Ganhos digital)', values: DATA.conversoes, total: fmt(totals.conversoes), isMoney: false },
+        { name: 'Investimento Total', values: DATA.investimento, total: fmtBRL(totals.investimento), isMoney: true },
+        { name: 'CPL Médio', values: DATA.cpl, total: fmtBRLDec(totals.cpl), isMoney: true, decimals: true },
+        { name: 'Custo por SQL', values: DATA.custoSQL, total: fmtBRLDec(avg(DATA.custoSQL)), isMoney: true, decimals: true },
+        { name: 'CAC/CPA', values: DATA.cac, total: fmtBRL(Math.round(totals.cac)), isMoney: true }
+      ];
+
+      const fmtCell = (row, v, i) => {
+        if (row.nullable && v === null) return '—';
+        if (row.isMoney && !row.decimals) return fmtBRL(v);
+        if (row.isMoney && row.decimals) return fmtBRLDec(v);
+        if (row.isPct) return v.toFixed(1).replace('.', ',') + '%';
+        return fmt(v);
+      };
+
+      document.querySelector('#kpi-table tbody').innerHTML = rows.map((row, idx) => `
+        <tr class="${idx % 2 === 0 ? 'row-odd' : 'row-even'}">
+          <td class="metric-name">${row.name}</td>
+          ${row.values.map((v, i) => `<td>${fmtCell(row, v, i)}</td>`).join('')}
+          <td class="col-total">${row.total}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Navigation
+    function goToSlide(n) {
+      if (n < 0 || n >= totalSlides) return;
+      document.querySelectorAll('.slide').forEach((s, i) => s.classList.toggle('active', i === n));
+      document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+      currentSlide = n;
+      document.getElementById('slide-counter').textContent = `${n + 1} / ${totalSlides}`;
+      document.getElementById('btn-prev').disabled = n === 0;
+      document.getElementById('btn-next').disabled = n === totalSlides - 1;
+
+      // Resize charts when slide becomes visible
+      if ([1, 2, 3].includes(n)) {
+        setTimeout(() => Object.values(charts).forEach(c => c.resize()), 100);
+      }
+    }
+
+    function initNav() {
+      const dots = document.getElementById('nav-dots');
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => goToSlide(i));
+        dots.appendChild(dot);
+      }
+
+      document.getElementById('btn-prev').addEventListener('click', () => goToSlide(currentSlide - 1));
+      document.getElementById('btn-next').addEventListener('click', () => goToSlide(currentSlide + 1));
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
+      });
+    }
+
+    // Init
+    renderFunnelTabs();
+    renderFunnel();
+    renderTable();
+    initCharts();
+    initNav();
+  </script>
+</body>
+</html>

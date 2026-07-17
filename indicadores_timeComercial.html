@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grupo Hiper Saúde — Performance Comercial H1 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <style>
+    :root {
+      --hiper-red: #D73027;
+      --hiper-blue: #3D5DA9;
+      --hiper-blue-light: #5A7BC4;
+      --hiper-gray: #4F4F4F;
+      --hiper-gray-muted: #7A7A7A;
+      --hiper-gray-light: #A8A8A8;
+      --bg: #FFFFFF;
+      --surface: #F8F9FB;
+      --surface-2: #EEF1F6;
+      --border: rgba(79, 79, 79, 0.12);
+      --text: #4F4F4F;
+      --text-muted: #7A7A7A;
+      --accent: #3D5DA9;
+      --accent-2: #D73027;
+      --warning: #C45A20;
+      --danger: #D73027;
+      --success: #3D5DA9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito Sans', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .deck { height: 100vh; position: relative; }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 48px 64px 80px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+    }
+
+    .brand {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hiper-blue);
+      font-weight: 700;
+    }
+
+    .brand-accent {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-accent::before {
+      content: '';
+      width: 24px;
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+    }
+
+    .logo { height: 56px; width: auto; object-fit: contain; }
+    .logo-lg { height: 88px; margin-bottom: 8px; }
+    .slide-logo { position: absolute; top: 48px; right: 64px; height: 40px; opacity: 0.95; }
+    .slide:not(.title-slide) { position: absolute; }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-top: 6px;
+      color: var(--hiper-gray);
+    }
+
+    .slide-subtitle { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+
+    .title-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .title-slide .hero-title {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 800px;
+      color: var(--hiper-gray);
+    }
+
+    .title-slide .hero-title span { color: var(--hiper-blue); }
+    .title-slide .hero-meta { margin-top: 24px; font-size: 16px; color: var(--text-muted); }
+
+    .title-line {
+      width: 120px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+      margin: 28px auto;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-grid.hero {
+      flex: 1;
+      align-content: center;
+      gap: 24px;
+    }
+
+    .kpi-grid.hero .kpi-card { padding: 36px 32px; }
+    .kpi-grid.hero .kpi-value { font-size: 52px; margin: 16px 0 10px; }
+    .kpi-grid.hero .kpi-detail { font-size: 14px; }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kpi-card.highlight {
+      border-color: rgba(61, 93, 169, 0.35);
+      background: linear-gradient(160deg, rgba(61,93,169,0.06) 0%, var(--surface) 60%);
+      border-top: 3px solid var(--hiper-blue);
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 10px 0 6px;
+      color: var(--hiper-gray);
+    }
+
+    .kpi-card.highlight .kpi-value { color: var(--hiper-blue); }
+    .kpi-detail { font-size: 12px; color: var(--text-muted); }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .charts-row.three-cols { grid-template-columns: repeat(3, 1fr); }
+    .charts-row.three-cols .chart-wrap { min-height: 240px; }
+
+    .chart-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .chart-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: var(--hiper-gray); }
+    .chart-caption { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; }
+    .chart-wrap { flex: 1; position: relative; min-height: 200px; }
+
+    .month-tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+
+    .month-tab {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .month-tab:hover { border-color: rgba(61,93,169,0.4); color: var(--hiper-gray); }
+
+    .month-tab.active {
+      background: rgba(61, 93, 169, 0.1);
+      border-color: var(--hiper-blue);
+      color: var(--hiper-blue);
+      font-weight: 700;
+    }
+
+    .month-tab.semestre.active {
+      background: rgba(215, 48, 39, 0.08);
+      border-color: var(--hiper-red);
+      color: var(--hiper-red);
+    }
+
+    .funnel-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 20px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .funnel-right { display: flex; flex-direction: column; gap: 16px; min-height: 0; }
+    .funnel-right .chart-panel { flex: 1; min-height: 0; }
+    .funnel-right .chart-wrap { min-height: 140px; }
+
+    .funnel-viz {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .funnel-step { display: flex; align-items: center; gap: 12px; }
+
+    .funnel-bar-wrap {
+      flex: 1;
+      height: 44px;
+      background: var(--surface-2);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .funnel-bar {
+      height: 100%;
+      background: var(--hiper-blue);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      transition: width 0.5s ease;
+      min-width: fit-content;
+    }
+
+    .funnel-step:nth-child(3) .funnel-bar { background: var(--hiper-red); }
+    .funnel-step:nth-child(4) .funnel-bar { background: var(--hiper-blue-light); }
+
+    .funnel-label {
+      width: 158px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.3;
+    }
+
+    .funnel-rate {
+      width: 72px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--hiper-blue);
+      text-align: right;
+    }
+
+    .funnel-step:nth-child(3) .funnel-rate { color: var(--hiper-red); }
+
+    .funnel-rate-dual {
+      width: 96px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: flex-end;
+    }
+
+    .funnel-rate-dual .rate-line {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--hiper-gray);
+      line-height: 1.2;
+    }
+
+    .funnel-rate-dual .rate-tag {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .funnel-summary {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .funnel-summary-item {
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .funnel-summary-item .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .funnel-summary-item .value { font-size: 18px; font-weight: 800; color: var(--hiper-gray); }
+    .funnel-summary-item.highlight .value { color: var(--hiper-red); }
+
+    .data-table-wrap {
+      flex: 1;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      padding: 12px 16px 16px;
+    }
+
+    #kpi-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      font-size: 13px;
+    }
+
+    #kpi-table th, #kpi-table td {
+      padding: 12px 14px;
+      text-align: right;
+      border: none;
+    }
+
+    #kpi-table th:first-child, #kpi-table td:first-child {
+      text-align: left;
+      padding-left: 18px;
+    }
+
+    #kpi-table th:last-child, #kpi-table td:last-child { padding-right: 18px; }
+
+    #kpi-table thead th {
+      background: transparent;
+      color: var(--hiper-gray);
+      font-weight: 800;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      position: sticky;
+      top: 0;
+      padding-top: 8px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    #kpi-table tbody tr { transition: background 0.15s ease; }
+    #kpi-table tbody tr.row-odd td { background: #FFFFFF; }
+    #kpi-table tbody tr.row-even td { background: var(--surface); }
+    #kpi-table tbody tr:hover td { background: rgba(61, 93, 169, 0.08); }
+    #kpi-table tbody tr.section-header td {
+      background: rgba(61, 93, 169, 0.1) !important;
+      font-weight: 800;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--hiper-blue);
+      padding-top: 16px;
+    }
+
+    #kpi-table tbody td:first-child { border-radius: 8px 0 0 8px; }
+    #kpi-table tbody td:last-child { border-radius: 0 8px 8px 0; }
+    #kpi-table td.metric-name { color: var(--hiper-gray); font-weight: 700; font-size: 12px; }
+    #kpi-table td.col-total {
+      font-weight: 800;
+      color: var(--hiper-blue);
+      background: rgba(61, 93, 169, 0.06) !important;
+    }
+
+    #kpi-table tbody tr:hover td.col-total { background: rgba(61, 93, 169, 0.12) !important; }
+
+    .footnote { font-size: 11px; color: var(--text-muted); margin-top: 12px; }
+
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: rgba(255,255,255,0.97);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+    }
+
+    .nav-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+    }
+
+    .nav-dots { display: flex; gap: 8px; }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-dot.active {
+      background: var(--hiper-blue);
+      border-color: var(--hiper-blue);
+      transform: scale(1.25);
+    }
+
+    .nav-buttons { display: flex; gap: 8px; }
+
+    .nav-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--hiper-gray);
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--hiper-blue);
+      color: var(--hiper-blue);
+      background: rgba(61, 93, 169, 0.06);
+    }
+
+    .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .slide-counter { font-size: 13px; color: var(--text-muted); }
+    .keyboard-hint { font-size: 11px; color: var(--text-muted); opacity: 0.6; }
+
+    @media (max-width: 1200px) {
+      .slide { padding: 32px 32px 80px; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .charts-row, .charts-row.three-cols, .funnel-layout, .funnel-right { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- Slide 1: Capa -->
+    <section class="slide title-slide active" data-slide="0">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="logo logo-lg">
+      <div class="title-line"></div>
+      <h1 class="hero-title">Performance <span>Comercial</span></h1>
+      <p class="hero-meta">1º Semestre 2026 · Janeiro a Junho</p>
+      <p class="hero-meta" style="margin-top:8px; font-size:14px;">Time Comercial · Luma · Luiz · Higor/Jéssika</p>
+    </section>
+
+    <!-- Slide 2: Resumo + Volume -->
+    <section class="slide" data-slide="1">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Volume do Funil</div>
+          <h2 class="slide-title">Agendamentos, reuniões e contratos por mês</h2>
+          <p class="slide-subtitle">Resumo consolidado do semestre</p>
+        </div>
+      </div>
+      <div class="kpi-grid hero">
+        <div class="kpi-card highlight">
+          <div class="kpi-label">Agendamentos</div>
+          <div class="kpi-value" id="kpi-agend">504</div>
+          <div class="kpi-detail">Total semestre</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Reuniões realizadas</div>
+          <div class="kpi-value" id="kpi-reun">319</div>
+          <div class="kpi-detail">63,3% de comparecimento</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Contratos fechados</div>
+          <div class="kpi-value" id="kpi-cont">48</div>
+          <div class="kpi-detail">Ganhos no semestre</div>
+        </div>
+        <div class="kpi-card highlight">
+          <div class="kpi-label">Funil completo</div>
+          <div class="kpi-value" id="kpi-funil">9,5%</div>
+          <div class="kpi-detail">Ganhos / agendamentos</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Por Executivo -->
+    <section class="slide" data-slide="2">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Performance Individual</div>
+          <h2 class="slide-title">Resultados por executivo</h2>
+          <p class="slide-subtitle">Comparativo mensal de agendamentos, reuniões e contratos</p>
+        </div>
+      </div>
+      <div class="charts-row three-cols">
+        <div class="chart-panel">
+          <h3>Agendamentos</h3>
+          <p class="chart-caption">Por executivo · unidades</p>
+          <div class="chart-wrap"><canvas id="chartExecAgend"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <h3>Reuniões realizadas</h3>
+          <p class="chart-caption">Por executivo · unidades</p>
+          <div class="chart-wrap"><canvas id="chartExecReun"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <h3>Contratos fechados</h3>
+          <p class="chart-caption">Por executivo · unidades</p>
+          <div class="chart-wrap"><canvas id="chartExecCont"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Taxas -->
+    <section class="slide" data-slide="3">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Taxas de Aproveitamento</div>
+          <h2 class="slide-title">Indicadores de conversão do funil</h2>
+          <p class="slide-subtitle" id="taxa-subtitle">Evolução mensal — visão consolidada (geral)</p>
+        </div>
+      </div>
+      <div class="month-tabs" id="exec-tabs"></div>
+      <div class="charts-row three-cols">
+        <div class="chart-panel">
+          <h3>Agendamento → Reunião</h3>
+          <p class="chart-caption"> %</p>
+          <div class="chart-wrap"><canvas id="chartTaxaAR"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <h3>Reunião → Contrato</h3>
+          <p class="chart-caption"> %</p>
+          <div class="chart-wrap"><canvas id="chartTaxaRC"></canvas></div>
+        </div>
+        <div class="chart-panel">
+          <h3>Funil completo</h3>
+          <p class="chart-caption"> %</p>
+          <div class="chart-wrap"><canvas id="chartTaxaFC"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: Funil interativo -->
+    <section class="slide" data-slide="4">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Funil Comercial</div>
+          <h2 class="slide-title">Aproveitamento por período</h2>
+          <p class="slide-subtitle">Do agendamento ao contrato — taxas por etapa</p>
+        </div>
+      </div>
+      <div class="month-tabs" id="funnel-exec-tabs"></div>
+      <div class="month-tabs" id="funnel-tabs"></div>
+      <div class="funnel-layout">
+        <div class="funnel-viz" id="funnel-viz"></div>
+        <div class="funnel-right">
+          <div class="chart-panel">
+            <h3>Agendadas vs Realizadas</h3>
+            <p class="chart-caption">Volume mensal · comparativo de comparecimento</p>
+            <div class="chart-wrap"><canvas id="chartAgendReal"></canvas></div>
+          </div>
+          <div class="chart-panel">
+            <h3>Evolução Reunião → Contrato</h3>
+            <p class="chart-caption">Performance mensal · % ganhos sobre reuniões realizadas</p>
+            <div class="chart-wrap"><canvas id="chartEvolRC"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <p class="footnote" id="funnel-footnote">Taxa Reunião → Contrato calculada sobre reuniões efetivamente realizadas (319 no semestre)</p>
+    </section>
+
+    <!-- Slide 6: Tabela -->
+    <section class="slide" data-slide="5">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Dados Detalhados</div>
+          <h2 class="slide-title">Tabela completa de indicadores</h2>
+          <p class="slide-subtitle">Volumes e taxas por executivo — Jan a Jun 2026</p>
+        </div>
+      </div>
+      <div class="data-table-wrap">
+        <table id="kpi-table">
+          <thead>
+            <tr>
+              <th>Métrica / Executivo</th>
+              <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
+              <th>Acumulado</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="nav-bar">
+    <span class="keyboard-hint">← → ou clique para navegar · F11 para tela cheia</span>
+    <div class="nav-dots" id="nav-dots"></div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span class="slide-counter" id="slide-counter">1 / 6</span>
+      <div class="nav-buttons">
+        <button class="nav-btn" id="btn-prev" disabled>Anterior</button>
+        <button class="nav-btn" id="btn-next">Próximo</button>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+    const EXECUTIVOS = ['Luma', 'Luiz', 'Higor/Jéssika'];
+
+    const DATA = {
+      agendamentos: {
+        Luma: [19, 25, 30, 40, 23, 33],
+        Luiz: [26, 45, 61, 55, 30, 30],
+        'Higor/Jéssika': [5, 3, 0, 29, 30, 20]
+      },
+      agendamentosTotal: [50, 73, 91, 124, 83, 83],
+      reunioesRealizadas: {
+        Luma: [12, 14, 21, 11, 17, 21],
+        Luiz: [15, 30, 49, 39, 21, 29],
+        'Higor/Jéssika': [3, 0, 0, 14, 13, 10]
+      },
+      reunioesTotal: [30, 44, 70, 64, 51, 60],
+      contratos: {
+        Luma: [3, 4, 6, 2, 3, 1],
+        Luiz: [3, 7, 4, 4, 6, 4],
+        'Higor/Jéssika': [0, 1, 0, 0, 0, 0]
+      },
+      contratosTotal: [6, 12, 10, 6, 9, 5],
+      taxaAgendReuniao: {
+        Luma: [63.2, 56.0, 70.0, 27.5, 73.9, 63.6],
+        Luiz: [57.7, 66.7, 80.3, 70.9, 70.0, 96.7],
+        'Higor/Jéssika': [60.0, 0, null, 48.3, 43.3, 50.0],
+        geral: [60.0, 60.3, 76.9, 51.6, 61.4, 72.3]
+      },
+      taxaReuniaoContrato: {
+        Luma: [25.0, 28.6, 28.6, 18.2, 17.6, 4.8],
+        Luiz: [20.0, 23.3, 8.2, 10.3, 28.6, 13.8],
+        'Higor/Jéssika': [0, null, null, 0, 0, 0],
+        geral: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3]
+      },
+      taxaFunilCompleto: {
+        Luma: [15.8, 16.0, 20.0, 5.0, 13.0, 3.0],
+        Luiz: [11.5, 15.6, 6.6, 7.3, 20.0, 13.3],
+        'Higor/Jéssika': [0, 33.3, null, 0, 0, 0],
+        geral: [12.0, 16.4, 11.0, 4.8, 10.8, 6.0]
+      },
+      acumulado: {
+        taxaAgendReuniao: { Luma: 56.5, Luiz: 74.1, 'Higor/Jéssika': 46.0, geral: 63.3 },
+        taxaReuniaoContrato: { Luma: 19.8, Luiz: 15.3, 'Higor/Jéssika': 2.5, geral: 15.0 },
+        taxaFunilCompleto: { Luma: 11.2, Luiz: 11.3, 'Higor/Jéssika': 1.1, geral: 9.5 }
+      }
+    };
+
+    const sum = arr => arr.reduce((a, b) => a + b, 0);
+    const fmt = n => n.toLocaleString('pt-BR');
+    const fmtPct = n => n.toFixed(1).replace('.', ',') + '%';
+    const fmtPct2 = n => n.toFixed(2).replace('.', ',') + '%';
+
+    const totals = {
+      agendamentos: sum(DATA.agendamentosTotal),
+      reunioes: sum(DATA.reunioesTotal),
+      contratos: sum(DATA.contratosTotal),
+      taxaAgendReun: DATA.acumulado.taxaAgendReuniao.geral,
+      taxaReunContr: DATA.acumulado.taxaReuniaoContrato.geral,
+      taxaFunil: DATA.acumulado.taxaFunilCompleto.geral
+    };
+
+    DATA.taxaAgendReal = DATA.reunioesTotal.map((r, i) =>
+      +(r / DATA.agendamentosTotal[i] * 100).toFixed(1)
+    );
+
+    Chart.defaults.color = '#7A7A7A';
+    Chart.defaults.borderColor = 'rgba(79, 79, 79, 0.08)';
+    Chart.defaults.font.family = "'Nunito Sans', 'Segoe UI', system-ui, sans-serif";
+
+    const chartColors = {
+      blue: '#3D5DA9',
+      red: '#D73027',
+      blueLight: '#5A7BC4',
+      blueFill: 'rgba(61, 93, 169, 0.12)',
+      redFill: 'rgba(215, 48, 39, 0.1)',
+      muted: 'rgba(122, 122, 122, 0.35)',
+      exec: ['#3D5DA9', '#D73027', '#5A7BC4']
+    };
+
+    const gridColor = 'rgba(79, 79, 79, 0.08)';
+    Chart.register(ChartDataLabels);
+
+    const labelFont = {
+      weight: '700',
+      size: 11,
+      family: "'Nunito Sans', 'Segoe UI', system-ui, sans-serif"
+    };
+
+    const labelBase = {
+      color: '#4F4F4F',
+      font: labelFont,
+      clamp: true,
+      clip: false
+    };
+
+    let currentSlide = 0;
+    let selectedMonth = 'semestre';
+    let selectedExec = 'geral';
+    let selectedFunnelExec = 'geral';
+    let charts = {};
+    const totalSlides = 6;
+
+    const TAXA_CHARTS = [
+      { key: 'taxaAR', canvas: 'chartTaxaAR', dataKey: 'taxaAgendReuniao', acumKey: 'taxaAgendReuniao', color: chartColors.blue },
+      { key: 'taxaRC', canvas: 'chartTaxaRC', dataKey: 'taxaReuniaoContrato', acumKey: 'taxaReuniaoContrato', color: chartColors.red },
+      { key: 'taxaFC', canvas: 'chartTaxaFC', dataKey: 'taxaFunilCompleto', acumKey: 'taxaFunilCompleto', color: chartColors.blueLight }
+    ];
+
+    function createExecGroupedChart(canvasId, dataKey) {
+      const allValues = EXECUTIVOS.flatMap(exec => DATA[dataKey][exec]);
+      const maxVal = Math.max(...allValues);
+
+      return new Chart(document.getElementById(canvasId), {
+        type: 'bar',
+        data: {
+          labels: MESES,
+          datasets: EXECUTIVOS.map((exec, i) => ({
+            label: exec,
+            data: DATA[dataKey][exec],
+            backgroundColor: chartColors.exec[i],
+            borderRadius: 3
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 40, left: 4, right: 8 } },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 10, padding: 10, font: { size: 10, weight: '600' } }
+            },
+            datalabels: {
+              ...labelBase,
+              anchor: 'end',
+              align: 'top',
+              offset: 3,
+              font: { ...labelFont, size: 11, weight: '800' },
+              color: ctx => chartColors.exec[ctx.datasetIndex],
+              formatter: v => fmt(v)
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              suggestedMax: maxVal * 1.25
+            },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A', font: { size: 10 } } }
+          }
+        }
+      });
+    }
+
+    function getExecRateData(dataKey) {
+      return selectedExec === 'geral'
+        ? DATA[dataKey].geral
+        : DATA[dataKey][selectedExec];
+    }
+
+    function getExecAcumulado(acumKey) {
+      return DATA.acumulado[acumKey][selectedExec];
+    }
+
+    function createTaxaLineChart(cfg) {
+      const data = getExecRateData(cfg.dataKey);
+      const mediaVal = getExecAcumulado(cfg.acumKey);
+      const color = cfg.color;
+      const fill = color === chartColors.red ? chartColors.redFill
+        : color === chartColors.blueLight ? 'rgba(90, 123, 196, 0.12)'
+        : chartColors.blueFill;
+
+      return new Chart(document.getElementById(cfg.canvas), {
+        type: 'line',
+        data: {
+          labels: MESES,
+          datasets: [
+            {
+              label: selectedExec === 'geral' ? 'Geral' : selectedExec,
+              data,
+              borderColor: color,
+              backgroundColor: fill,
+              fill: true,
+              tension: 0.3,
+              pointRadius: 6,
+              pointBackgroundColor: color,
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              borderWidth: 2.5,
+              spanGaps: false
+            },
+            {
+              label: `Acumulado (${fmtPct(mediaVal)})`,
+              data: MESES.map(() => mediaVal),
+              borderColor: chartColors.muted,
+              borderDash: [6, 4],
+              borderWidth: 1.5,
+              pointRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 32, left: 4, right: 8 } },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { boxWidth: 10, padding: 8, font: { size: 10, weight: '600' } }
+            },
+            datalabels: {
+              ...labelBase,
+              display: ctx => ctx.datasetIndex === 0 && ctx.dataset.data[ctx.dataIndex] != null,
+              anchor: 'end',
+              align: 'top',
+              offset: 6,
+              font: { ...labelFont, size: 11, weight: '800' },
+              color: color,
+              formatter: v => v != null ? v.toFixed(1).replace('.', ',') + '%' : ''
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              suggestedMax: Math.max(...data.filter(v => v != null), mediaVal) * 1.25,
+              ticks: { callback: v => v + '%' }
+            },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A' } }
+          }
+        }
+      });
+    }
+
+    function updateTaxaCharts() {
+      TAXA_CHARTS.forEach(cfg => {
+        const chart = charts[cfg.key];
+        const data = getExecRateData(cfg.dataKey);
+        const mediaVal = getExecAcumulado(cfg.acumKey);
+
+        chart.data.datasets[0].label = selectedExec === 'geral' ? 'Geral' : selectedExec;
+        chart.data.datasets[0].data = data;
+        chart.data.datasets[1].data = MESES.map(() => mediaVal);
+        chart.data.datasets[1].label = `Acumulado (${fmtPct(mediaVal)})`;
+        chart.options.scales.y.suggestedMax = Math.max(...data.filter(v => v != null), mediaVal) * 1.25;
+        chart.update();
+      });
+    }
+
+    function renderExecTabs() {
+      const tabs = document.getElementById('exec-tabs');
+      const items = [
+        { id: 'geral', label: 'Geral' },
+        ...EXECUTIVOS.map(exec => ({ id: exec, label: exec }))
+      ];
+
+      tabs.innerHTML = items.map(item => `
+        <button class="month-tab ${item.id === 'geral' ? 'semestre' : ''} ${item.id === selectedExec ? 'active' : ''}"
+          data-exec="${item.id}">${item.label}</button>
+      `).join('');
+
+      tabs.querySelectorAll('.month-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedExec = btn.dataset.exec;
+          tabs.querySelectorAll('.month-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('taxa-subtitle').textContent =
+            selectedExec === 'geral'
+              ? 'Evolução mensal — visão consolidada (geral)'
+              : `Evolução mensal — ${selectedExec}`;
+          updateTaxaCharts();
+        });
+      });
+    }
+
+    function initCharts() {
+      charts.execAgend = createExecGroupedChart('chartExecAgend', 'agendamentos');
+      charts.execReun = createExecGroupedChart('chartExecReun', 'reunioesRealizadas');
+      charts.execCont = createExecGroupedChart('chartExecCont', 'contratos');
+
+      TAXA_CHARTS.forEach(cfg => {
+        charts[cfg.key] = createTaxaLineChart(cfg);
+      });
+
+      charts.agendReal = new Chart(document.getElementById('chartAgendReal'), {
+        type: 'bar',
+        data: {
+          labels: MESES,
+          datasets: [
+            { label: 'Agendamentos', data: DATA.agendamentosTotal, backgroundColor: chartColors.red, borderRadius: 4 },
+            { label: 'Realizadas', data: DATA.reunioesTotal, backgroundColor: chartColors.blue, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 28, left: 4, right: 8 } },
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { size: 11, weight: '600' } } },
+            datalabels: {
+              ...labelBase,
+              anchor: 'end', align: 'top', offset: 2,
+              font: { ...labelFont, size: 10 },
+              formatter: v => fmt(v)
+            }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: gridColor }, suggestedMax: Math.max(...DATA.agendamentosTotal) * 1.2 },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A' } }
+          }
+        }
+      });
+
+      charts.evolRC = new Chart(document.getElementById('chartEvolRC'), {
+        type: 'line',
+        data: {
+          labels: MESES,
+          datasets: [
+            {
+              label: 'Reunião → Contrato',
+              data: DATA.taxaReuniaoContrato.geral,
+              borderColor: chartColors.red,
+              backgroundColor: chartColors.redFill,
+              fill: true,
+              tension: 0.3,
+              pointRadius: 6,
+              pointBackgroundColor: chartColors.red,
+              pointBorderColor: '#fff',
+              pointBorderWidth: 2,
+              borderWidth: 2.5,
+              spanGaps: false
+            },
+            {
+              label: `Acumulado (${fmtPct(totals.taxaReunContr)})`,
+              data: MESES.map(() => totals.taxaReunContr),
+              borderColor: chartColors.muted,
+              borderDash: [6, 4],
+              borderWidth: 1.5,
+              pointRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 32, left: 4, right: 8 } },
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12, font: { size: 11, weight: '600' } } },
+            datalabels: {
+              ...labelBase,
+              display: ctx => ctx.datasetIndex === 0 && ctx.dataset.data[ctx.dataIndex] != null,
+              anchor: 'end', align: 'top', offset: 6,
+              font: { ...labelFont, size: 12 },
+              color: chartColors.red,
+              formatter: v => v != null ? v.toFixed(1).replace('.', ',') + '%' : ''
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  if (ctx.datasetIndex === 0) {
+                    const i = ctx.dataIndex;
+                    const contData = selectedFunnelExec === 'geral'
+                      ? DATA.contratosTotal
+                      : DATA.contratos[selectedFunnelExec];
+                    const reunData = getFunnelReunData();
+                    return ` ${contData[i]} contratos / ${reunData[i]} reuniões (${ctx.formattedValue}%)`;
+                  }
+                  return ` Acumulado: ${fmtPct(getFunnelReunContrAcum())}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              suggestedMax: Math.max(...DATA.taxaReuniaoContrato.geral.filter(v => v != null), totals.taxaReunContr) * 1.3,
+              ticks: { callback: v => v + '%' }
+            },
+            x: { grid: { display: false }, ticks: { color: '#7A7A7A', font: { weight: '600' } } }
+          }
+        }
+      });
+    }
+
+    function getFunnelVolumes() {
+      const exec = selectedFunnelExec;
+      if (exec === 'geral') {
+        if (selectedMonth === 'semestre') {
+          return {
+            agend: totals.agendamentos,
+            reun: totals.reunioes,
+            cont: totals.contratos
+          };
+        }
+        const i = selectedMonth;
+        return {
+          agend: DATA.agendamentosTotal[i],
+          reun: DATA.reunioesTotal[i],
+          cont: DATA.contratosTotal[i]
+        };
+      }
+
+      const agendArr = DATA.agendamentos[exec];
+      const reunArr = DATA.reunioesRealizadas[exec];
+      const contArr = DATA.contratos[exec];
+
+      if (selectedMonth === 'semestre') {
+        return { agend: sum(agendArr), reun: sum(reunArr), cont: sum(contArr) };
+      }
+
+      const i = selectedMonth;
+      return { agend: agendArr[i], reun: reunArr[i], cont: contArr[i] };
+    }
+
+    function getFunnelRates() {
+      const exec = selectedFunnelExec;
+
+      if (exec === 'geral') {
+        if (selectedMonth === 'semestre') {
+          return {
+            tAR: totals.taxaAgendReun,
+            tRC: totals.taxaReunContr,
+            tFC: totals.taxaFunil
+          };
+        }
+        const i = selectedMonth;
+        return {
+          tAR: DATA.taxaAgendReuniao.geral[i],
+          tRC: DATA.taxaReuniaoContrato.geral[i],
+          tFC: DATA.taxaFunilCompleto.geral[i]
+        };
+      }
+
+      if (selectedMonth === 'semestre') {
+        return {
+          tAR: DATA.acumulado.taxaAgendReuniao[exec],
+          tRC: DATA.acumulado.taxaReuniaoContrato[exec],
+          tFC: DATA.acumulado.taxaFunilCompleto[exec]
+        };
+      }
+
+      const i = selectedMonth;
+      const rates = {
+        tAR: DATA.taxaAgendReuniao[exec][i],
+        tRC: DATA.taxaReuniaoContrato[exec][i],
+        tFC: DATA.taxaFunilCompleto[exec][i]
+      };
+
+      const vol = getFunnelVolumes();
+      if (rates.tAR == null && vol.agend > 0) rates.tAR = +(vol.reun / vol.agend * 100).toFixed(1);
+      if (rates.tRC == null && vol.reun > 0) rates.tRC = +(vol.cont / vol.reun * 100).toFixed(1);
+      if (rates.tFC == null && vol.agend > 0) rates.tFC = +(vol.cont / vol.agend * 100).toFixed(1);
+
+      return rates;
+    }
+
+    function getFunnelAgendData() {
+      return selectedFunnelExec === 'geral'
+        ? DATA.agendamentosTotal
+        : DATA.agendamentos[selectedFunnelExec];
+    }
+
+    function getFunnelReunData() {
+      return selectedFunnelExec === 'geral'
+        ? DATA.reunioesTotal
+        : DATA.reunioesRealizadas[selectedFunnelExec];
+    }
+
+    function getFunnelReunContrData() {
+      return selectedFunnelExec === 'geral'
+        ? DATA.taxaReuniaoContrato.geral
+        : DATA.taxaReuniaoContrato[selectedFunnelExec];
+    }
+
+    function getFunnelReunContrAcum() {
+      return selectedFunnelExec === 'geral'
+        ? totals.taxaReunContr
+        : DATA.acumulado.taxaReuniaoContrato[selectedFunnelExec];
+    }
+
+    function getFunnelReunSemestreTotal() {
+      return selectedFunnelExec === 'geral'
+        ? totals.reunioes
+        : sum(DATA.reunioesRealizadas[selectedFunnelExec]);
+    }
+
+    function updateFunnelCharts() {
+      const agendData = getFunnelAgendData();
+      const reunData = getFunnelReunData();
+      const reunContrData = getFunnelReunContrData();
+      const reunContrAcum = getFunnelReunContrAcum();
+      const execLabel = selectedFunnelExec === 'geral' ? 'Geral' : selectedFunnelExec;
+
+      charts.agendReal.data.datasets[0].data = agendData;
+      charts.agendReal.data.datasets[1].data = reunData;
+      charts.agendReal.options.scales.y.suggestedMax = Math.max(...agendData) * 1.2;
+      charts.agendReal.update();
+
+      charts.evolRC.data.datasets[0].label = `Reunião → Contrato — ${execLabel}`;
+      charts.evolRC.data.datasets[0].data = reunContrData;
+      charts.evolRC.data.datasets[1].data = MESES.map(() => reunContrAcum);
+      charts.evolRC.data.datasets[1].label = `Acumulado (${fmtPct(reunContrAcum)})`;
+      charts.evolRC.options.scales.y.suggestedMax =
+        Math.max(...reunContrData.filter(v => v != null), reunContrAcum) * 1.3;
+      charts.evolRC.update();
+
+      document.getElementById('funnel-footnote').textContent =
+        `Taxa Reunião → Contrato calculada sobre reuniões efetivamente realizadas (${fmt(getFunnelReunSemestreTotal())} no semestre${selectedFunnelExec !== 'geral' ? ' · ' + selectedFunnelExec : ''})`;
+    }
+
+    function renderFunnelExecTabs() {
+      const tabs = document.getElementById('funnel-exec-tabs');
+      const items = [
+        { id: 'geral', label: 'Geral' },
+        ...EXECUTIVOS.map(exec => ({ id: exec, label: exec }))
+      ];
+
+      tabs.innerHTML = items.map(item => `
+        <button class="month-tab ${item.id === 'geral' ? 'semestre' : ''} ${item.id === selectedFunnelExec ? 'active' : ''}"
+          data-exec="${item.id}">${item.label}</button>
+      `).join('');
+
+      tabs.querySelectorAll('.month-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedFunnelExec = btn.dataset.exec;
+          tabs.querySelectorAll('.month-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderFunnel();
+          updateFunnelCharts();
+        });
+      });
+    }
+
+    function renderFunnelTabs() {
+      const tabs = document.getElementById('funnel-tabs');
+      const items = [{ id: 'semestre', label: 'Semestre' }, ...MESES.map((m, i) => ({ id: i, label: m }))];
+      tabs.innerHTML = items.map(item => `
+        <button class="month-tab ${item.id === 'semestre' ? 'semestre' : ''} ${item.id === selectedMonth ? 'active' : ''}"
+          data-month="${item.id}">${item.label}</button>
+      `).join('');
+
+      tabs.querySelectorAll('.month-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedMonth = btn.dataset.month === 'semestre' ? 'semestre' : parseInt(btn.dataset.month);
+          tabs.querySelectorAll('.month-tab').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderFunnel();
+          updateFunnelCharts();
+        });
+      });
+    }
+
+    function renderFunnel() {
+      const { agend, reun, cont } = getFunnelVolumes();
+      const { tAR, tRC, tFC } = getFunnelRates();
+      const noShow = agend - reun;
+
+      const maxVal = agend || 1;
+      const pct = v => Math.max(10, (v / maxVal) * 100);
+
+      const periodLabel = selectedMonth === 'semestre'
+        ? 'Semestre'
+        : MESES[selectedMonth] + ' 2026';
+      const execLabel = selectedFunnelExec === 'geral'
+        ? ''
+        : ' · ' + selectedFunnelExec;
+
+      document.getElementById('funnel-viz').innerHTML = `
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--hiper-blue);margin-bottom:4px;">
+          Funil — ${periodLabel}${execLabel}
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Agendamentos</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:${pct(agend)}%">${fmt(agend)}</div>
+          </div>
+          <div class="funnel-rate">100%</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Reuniões realizadas</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:${pct(reun)}%">${fmt(reun)}</div>
+          </div>
+          <div class="funnel-rate">${(tAR ?? 0).toFixed(1).replace('.', ',')}%</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Contratos fechados</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:${pct(cont)}%">${fmt(cont)}</div>
+          </div>
+          <div class="funnel-rate-dual">
+            <div class="rate-line">${(tFC ?? 0).toFixed(1).replace('.', ',')}% <span class="rate-tag">agend.</span></div>
+            <div class="rate-line">${(tRC ?? 0).toFixed(1).replace('.', ',')}% <span class="rate-tag">reun.</span></div>
+          </div>
+        </div>
+        <div class="funnel-summary">
+          <div class="funnel-summary-item highlight">
+            <div class="label">No-show (não compareceu)</div>
+            <div class="value">${fmt(noShow)} agend.</div>
+          </div>
+          <div class="funnel-summary-item">
+            <div class="label">Taxa Reunião → Contrato</div>
+            <div class="value">${(tRC ?? 0).toFixed(1).replace('.', ',')}%</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector('#kpi-table tbody');
+      let html = '';
+      let rowIdx = 0;
+
+      const addSection = title => {
+        html += `<tr class="section-header"><td colspan="8">${title}</td></tr>`;
+      };
+
+      const addVolumeRows = (label, key, totalKey) => {
+        addSection(label);
+        EXECUTIVOS.forEach(exec => {
+          const vals = DATA[key][exec];
+          const total = sum(vals);
+          html += `<tr class="${rowIdx++ % 2 === 0 ? 'row-odd' : 'row-even'}">
+            <td class="metric-name">${exec}</td>
+            ${vals.map(v => `<td>${fmt(v)}</td>`).join('')}
+            <td class="col-total">${fmt(total)}</td>
+          </tr>`;
+        });
+        html += `<tr class="${rowIdx++ % 2 === 0 ? 'row-odd' : 'row-even'}">
+          <td class="metric-name">Total</td>
+          ${DATA[totalKey].map(v => `<td>${fmt(v)}</td>`).join('')}
+          <td class="col-total">${fmt(sum(DATA[totalKey]))}</td>
+        </tr>`;
+      };
+
+      const addRateRows = (label, key, acumKey) => {
+        addSection(label);
+        EXECUTIVOS.forEach(exec => {
+          const vals = DATA[key][exec];
+          const acum = DATA.acumulado[acumKey][exec];
+          html += `<tr class="${rowIdx++ % 2 === 0 ? 'row-odd' : 'row-even'}">
+            <td class="metric-name">${exec}</td>
+            ${vals.map(v => `<td>${v === null ? '—' : fmtPct(v)}</td>`).join('')}
+            <td class="col-total">${fmtPct(acum)}</td>
+          </tr>`;
+        });
+        const geralVals = DATA[key].geral;
+        html += `<tr class="${rowIdx++ % 2 === 0 ? 'row-odd' : 'row-even'}">
+          <td class="metric-name">Geral</td>
+          ${geralVals.map(v => `<td>${fmtPct(v)}</td>`).join('')}
+          <td class="col-total">${fmtPct(DATA.acumulado[acumKey].geral)}</td>
+        </tr>`;
+      };
+
+      addVolumeRows('Agendamentos', 'agendamentos', 'agendamentosTotal');
+      addVolumeRows('Reuniões realizadas', 'reunioesRealizadas', 'reunioesTotal');
+      addVolumeRows('Contratos fechados (ganhos)', 'contratos', 'contratosTotal');
+      addRateRows('Agendamento → Reunião', 'taxaAgendReuniao', 'taxaAgendReuniao');
+      addRateRows('Reunião → Contrato', 'taxaReuniaoContrato', 'taxaReuniaoContrato');
+      addRateRows('Funil completo (ganhos / agendamentos)', 'taxaFunilCompleto', 'taxaFunilCompleto');
+
+      tbody.innerHTML = html;
+    }
+
+    function goToSlide(n) {
+      if (n < 0 || n >= totalSlides) return;
+      document.querySelectorAll('.slide').forEach((s, i) => s.classList.toggle('active', i === n));
+      document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === n));
+      currentSlide = n;
+      document.getElementById('slide-counter').textContent = `${n + 1} / ${totalSlides}`;
+      document.getElementById('btn-prev').disabled = n === 0;
+      document.getElementById('btn-next').disabled = n === totalSlides - 1;
+
+      if ([2, 3, 4].includes(n)) {
+        setTimeout(() => Object.values(charts).forEach(c => c.resize()), 100);
+      }
+    }
+
+    function initNav() {
+      const dots = document.getElementById('nav-dots');
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+        dot.addEventListener('click', () => goToSlide(i));
+        dots.appendChild(dot);
+      }
+
+      document.getElementById('btn-prev').addEventListener('click', () => goToSlide(currentSlide - 1));
+      document.getElementById('btn-next').addEventListener('click', () => goToSlide(currentSlide + 1));
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
+      });
+    }
+
+    renderExecTabs();
+    renderFunnelExecTabs();
+    renderFunnelTabs();
+    renderFunnel();
+    renderTable();
+    initCharts();
+    updateFunnelCharts();
+    initNav();
+  </script>
+</body>
+</html>
