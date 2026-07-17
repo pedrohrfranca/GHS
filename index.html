@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grupo Hiper Saúde — Apresentações H1 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --hiper-red: #D73027;
+      --hiper-blue: #3D5DA9;
+      --hiper-gray: #4F4F4F;
+      --text-muted: #7A7A7A;
+      --surface: #F8F9FB;
+      --border: rgba(79, 79, 79, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito Sans', 'Segoe UI', system-ui, sans-serif;
+      background: #fff;
+      color: var(--hiper-gray);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    .container {
+      max-width: 640px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .logo { height: 72px; margin-bottom: 24px; }
+
+    .title-line {
+      width: 120px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+      margin: 0 auto 28px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    h1 span { color: var(--hiper-blue); }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      margin-bottom: 40px;
+    }
+
+    .cards {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 28px;
+      text-align: left;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      border-color: rgba(61, 93, 169, 0.4);
+      box-shadow: 0 4px 20px rgba(61, 93, 169, 0.08);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card .arrow {
+      float: right;
+      color: var(--hiper-blue);
+      font-weight: 800;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="logo">
+    <div class="title-line"></div>
+    <h1>Apresentações <span>H1 2026</span></h1>
+    <p class="subtitle">1º Semestre · Janeiro a Junho</p>
+
+    <div class="cards">
+      <a class="card" href="/midia">
+        <span class="arrow">→</span>
+        <h2>Resultados de Mídia Digital</h2>
+        <p>Volume, custos, funil e KPIs de mídia paga</p>
+      </a>
+      <a class="card" href="/comercial">
+        <span class="arrow">→</span>
+        <h2>Performance Comercial</h2>
+        <p>Agendamentos, reuniões, contratos e taxas por executivo</p>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
