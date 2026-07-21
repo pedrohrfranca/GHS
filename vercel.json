@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/midia", "destination": "/dashboard-midia-hiper-saude.html" },
-    { "source": "/comercial", "destination": "/indicadores_timeComercial.html" }
+    { "source": "/comercial", "destination": "/indicadores_timeComercial.html" },
+    { "source": "/projecao", "destination": "/projecao.html" }
   ]
 }
