@@ -423,7 +423,7 @@
       min-height: 0;
     }
 
-    .slider-block { margin-bottom: 22px; }
+    .slider-block { margin-bottom: 14px; }
 
     .slider-head {
       display: flex;
@@ -499,8 +499,9 @@
       min-width: fit-content;
     }
 
-    .funnel-mini-step:nth-child(2) .funnel-mini-fill { background: var(--hiper-red); }
-    .funnel-mini-step:nth-child(3) .funnel-mini-fill { background: var(--success); }
+    .funnel-mini-step:nth-child(2) .funnel-mini-fill { background: var(--hiper-blue-light); }
+    .funnel-mini-step:nth-child(3) .funnel-mini-fill { background: var(--hiper-red); }
+    .funnel-mini-step:nth-child(4) .funnel-mini-fill { background: var(--success); }
 
     .funnel-mini-step .pct {
       font-size: 12px;
@@ -753,7 +754,16 @@
       <div class="sim-layout">
         <div class="panel">
           <h3>Volume e taxas-alvo</h3>
-          <p class="caption" id="sim-volume-caption">Baseline do período: 504 agendamentos · 48 contratos</p>
+          <p class="caption" id="sim-volume-caption">Baseline do período: leads · agendamentos · contratos</p>
+
+          <div class="slider-block">
+            <div class="slider-head">
+              <label>Leads</label>
+              <span class="rate" id="sim-leads-label">—</span>
+            </div>
+            <input type="range" id="sim-leads" min="300" max="9000" step="1" value="5589">
+            <div class="slider-bench" id="sim-leads-bench">Real do período</div>
+          </div>
 
           <div class="slider-block">
             <div class="slider-head">
@@ -761,7 +771,7 @@
               <span class="rate" id="sim-agend-label">504</span>
             </div>
             <input type="range" id="sim-agend" min="200" max="800" step="1" value="504">
-            <div class="slider-bench" id="sim-agend-bench">Real do período: 504</div>
+            <div class="slider-bench" id="sim-agend-bench">Real do período: 504 · Lead → Agend: 9,0%</div>
           </div>
 
           <div class="slider-block">
@@ -803,8 +813,8 @@
               <div class="kpi-value" id="sim-delta" style="font-size:28px;">0</div>
             </div>
             <div class="kpi-card highlight">
-              <div class="kpi-label">Funil</div>
-              <div class="kpi-value" id="sim-funil" style="font-size:28px;">9,5%</div>
+              <div class="kpi-label">Funil Lead→Contrato</div>
+              <div class="kpi-value" id="sim-funil" style="font-size:28px;">0,86%</div>
             </div>
           </div>
         </div>
@@ -832,18 +842,20 @@
         <div class="compare-row">
           <div class="compare-col">
             <div class="compare-label" id="proj-base-label">Baseline do período</div>
+            <div class="stat-line"><span class="name">Leads</span><span class="val" id="base-leads">—</span></div>
             <div class="stat-line"><span class="name">Agendamentos</span><span class="val" id="base-agend">—</span></div>
             <div class="stat-line"><span class="name">Reuniões</span><span class="val" id="base-reun">—</span></div>
             <div class="stat-line"><span class="name">Contratos</span><span class="val" id="base-cont">—</span></div>
-            <div class="stat-line"><span class="name">Funil completo</span><span class="val" id="base-funil">—</span></div>
+            <div class="stat-line"><span class="name">Funil (Lead→Contrato)</span><span class="val" id="base-funil">—</span></div>
           </div>
           <div class="compare-arrow">→</div>
           <div class="compare-col projected">
             <div class="compare-label">Sua projeção</div>
+            <div class="stat-line"><span class="name">Leads</span><span class="val" id="proj-leads">—</span></div>
             <div class="stat-line"><span class="name">Agendamentos</span><span class="val" id="proj-agend">—</span></div>
             <div class="stat-line"><span class="name">Reuniões</span><span class="val" id="proj-reun">—</span></div>
             <div class="stat-line"><span class="name">Contratos</span><span class="val" id="proj-cont">—</span></div>
-            <div class="stat-line"><span class="name">Funil completo</span><span class="val" id="proj-funil">—</span></div>
+            <div class="stat-line"><span class="name">Funil (Lead→Contrato)</span><span class="val" id="proj-funil">—</span></div>
           </div>
         </div>
         <div class="kpi-grid" style="margin-top:16px;margin-bottom:0;grid-template-columns:repeat(4,1fr);">
@@ -893,17 +905,22 @@
     const BASE_CONT = 48;
 
     const MONTHLY = {
+      leads: [1521, 1212, 540, 829, 845, 642],
       agend: [50, 73, 91, 124, 83, 83],
       reun: [30, 44, 70, 64, 51, 60],
       cont: [6, 12, 10, 6, 9, 5],
       ar: [60.0, 60.3, 76.9, 51.6, 61.4, 72.3],
-      rc: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3],
-      fc: [12.0, 16.4, 11.0, 4.8, 10.8, 6.0]
+      rc: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3]
     };
+
+    const LEADS = MONTHLY.leads.reduce((a, b) => a + b, 0);
 
     const fmt = n => Math.round(n).toLocaleString('pt-BR');
     const fmtPct = n => n.toFixed(1).replace('.', ',') + '%';
+    const fmtPct2 = n => n.toFixed(2).replace('.', ',') + '%';
     const fmtSigned = n => (n >= 0 ? '+' : '') + fmt(n);
+    const rateLA = (agend, leads) => leads > 0 ? agend / leads * 100 : 0;
+    const rateFC = (cont, leads) => leads > 0 ? cont / leads * 100 : 0;
 
     let currentSlide = 0;
     let simPeriod = 'semestre';
@@ -915,16 +932,18 @@
         return {
           label: 'Semestre',
           mode: 'historico',
+          leads: LEADS,
           agend: AGEND,
           reun: BASE_REUN,
           cont: BASE_CONT,
           ar: 63.3,
           rc: 15.0,
-          fc: 9.5
+          la: rateLA(AGEND, LEADS),
+          fc: rateFC(BASE_CONT, LEADS)
         };
       }
       if (simPeriod === 'meta') {
-        // Referência = Junho (último mês fechado). Não altera histórico.
+        const junLeads = MONTHLY.leads[5];
         const junAgend = MONTHLY.agend[5];
         const junReun = MONTHLY.reun[5];
         const junCont = MONTHLY.cont[5];
@@ -932,51 +951,68 @@
           label: 'Meta mês seguinte',
           mode: 'meta',
           refLabel: 'Jun 2026 (ref.)',
+          leads: junLeads,
           agend: junAgend,
           reun: junReun,
           cont: junCont,
           ar: MONTHLY.ar[5],
           rc: MONTHLY.rc[5],
-          fc: MONTHLY.fc[5],
-          // Valores iniciais sugeridos para a meta (não são o real de junho)
+          la: rateLA(junAgend, junLeads),
+          fc: rateFC(junCont, junLeads),
+          startLeads: junLeads,
           startAgend: junAgend,
           startAr: 70,
           startRc: 18
         };
       }
       const i = simPeriod;
+      const leads = MONTHLY.leads[i];
+      const agend = MONTHLY.agend[i];
+      const cont = MONTHLY.cont[i];
       return {
         label: MESES[i] + ' 2026',
         mode: 'historico',
-        agend: MONTHLY.agend[i],
+        leads,
+        agend,
         reun: MONTHLY.reun[i],
-        cont: MONTHLY.cont[i],
+        cont,
         ar: MONTHLY.ar[i],
         rc: MONTHLY.rc[i],
-        fc: MONTHLY.fc[i]
+        la: rateLA(agend, leads),
+        fc: rateFC(cont, leads)
       };
     }
 
     function getSimValues() {
       const base = getSimBaseline();
-      const agend = +document.getElementById('sim-agend').value;
+      let leads = +document.getElementById('sim-leads').value;
+      let agend = +document.getElementById('sim-agend').value;
+      if (agend > leads) {
+        agend = leads;
+        document.getElementById('sim-agend').value = agend;
+      }
       const ar = +document.getElementById('sim-ar').value;
       const rc = +document.getElementById('sim-rc').value;
       const reun = agend * ar / 100;
       const cont = reun * rc / 100;
-      const funil = agend > 0 ? cont / agend * 100 : 0;
+      const la = rateLA(agend, leads);
+      const funil = rateFC(cont, leads);
       return {
         base,
+        leads,
         agend,
         ar,
         rc,
+        la,
         reun,
         cont,
         funil,
         delta: cont - base.cont,
+        leadsDelta: leads - base.leads,
         agendDelta: agend - base.agend,
         arDelta: ar - base.ar,
-        rcDelta: rc - base.rc
+        rcDelta: rc - base.rc,
+        laDelta: la - base.la
       };
     }
 
@@ -1015,32 +1051,44 @@
 
     function applySimPeriod() {
       const base = getSimBaseline();
+      const leadsInput = document.getElementById('sim-leads');
       const agendInput = document.getElementById('sim-agend');
       const arInput = document.getElementById('sim-ar');
       const rcInput = document.getElementById('sim-rc');
 
+      const seedLeads = base.mode === 'meta' ? base.startLeads : base.leads;
       const seedAgend = base.mode === 'meta' ? base.startAgend : base.agend;
       const seedAr = base.mode === 'meta' ? base.startAr : base.ar;
       const seedRc = base.mode === 'meta' ? base.startRc : base.rc;
 
-      const minAgend = Math.max(10, Math.round(base.agend * 0.4));
-      const maxAgend = Math.round(base.agend * 2.5);
+      const minLeads = Math.max(50, Math.round(base.leads * 0.35));
+      const maxLeads = Math.round(base.leads * 2.5);
+      leadsInput.min = minLeads;
+      leadsInput.max = maxLeads;
+      leadsInput.value = seedLeads;
+
+      const minAgend = Math.max(5, Math.round(base.agend * 0.4));
+      const maxAgend = Math.min(maxLeads, Math.round(base.agend * 2.5));
       agendInput.min = minAgend;
       agendInput.max = maxAgend;
-      agendInput.value = seedAgend;
+      agendInput.value = Math.min(seedAgend, seedLeads);
       arInput.value = seedAr;
       rcInput.value = seedRc;
 
       if (base.mode === 'meta') {
+        document.getElementById('sim-leads-bench').textContent =
+          `Referência Jun: ${fmt(base.leads)} · brinque livremente (${fmt(minLeads)}–${fmt(maxLeads)}) · histórico intacto`;
         document.getElementById('sim-agend-bench').textContent =
-          `Referência Jun: ${fmt(base.agend)} · brinque livremente (${fmt(minAgend)}–${fmt(maxAgend)}) · histórico intacto`;
+          `Referência Jun: ${fmt(base.agend)} · Lead → Agend jun ${fmtPct(base.la)}`;
         document.getElementById('sim-ar-bench').textContent =
           `Jun real ${fmtPct(base.ar)} · meta sugerida 70% · Luiz 74,1%`;
         document.getElementById('sim-rc-bench').textContent =
           `Jun real ${fmtPct(base.rc)} · meta sugerida 18% · Luma 19,8%`;
       } else {
+        document.getElementById('sim-leads-bench').textContent =
+          `Real do período: ${fmt(base.leads)} · faixa ${fmt(minLeads)}–${fmt(maxLeads)}`;
         document.getElementById('sim-agend-bench').textContent =
-          `Real do período: ${fmt(base.agend)} · faixa ${fmt(minAgend)}–${fmt(maxAgend)}`;
+          `Real do período: ${fmt(base.agend)} · Lead → Agend ${fmtPct(base.la)}`;
         document.getElementById('sim-ar-bench').textContent =
           `Atual do período ${fmtPct(base.ar)} · Luiz 74,1% · Meta sugerida 70%`;
         document.getElementById('sim-rc-bench').textContent =
@@ -1083,20 +1131,24 @@
 
       document.getElementById('proj-chips').innerHTML = `
         <div class="metric-chip">Período<strong>${p.base.label}</strong></div>
+        <div class="metric-chip">Leads<strong>${fmt(p.leads)}</strong></div>
         <div class="metric-chip">Agendas<strong>${fmt(p.agend)}</strong></div>
+        <div class="metric-chip">Lead → Agend<strong>${fmtPct(p.la)}</strong></div>
         <div class="metric-chip">Agend → Reunião<strong>${fmtPct(p.ar)}</strong></div>
         <div class="metric-chip">Reunião → Contrato<strong>${fmtPct(p.rc)}</strong></div>
       `;
 
+      document.getElementById('base-leads').textContent = fmt(p.base.leads);
       document.getElementById('base-agend').textContent = fmt(p.base.agend);
       document.getElementById('base-reun').textContent = fmt(p.base.reun);
       document.getElementById('base-cont').textContent = fmt(p.base.cont);
-      document.getElementById('base-funil').textContent = fmtPct(p.base.fc);
+      document.getElementById('base-funil').textContent = fmtPct2(p.base.fc);
 
+      document.getElementById('proj-leads').textContent = fmt(p.leads);
       document.getElementById('proj-agend').textContent = fmt(p.agend);
       document.getElementById('proj-reun').textContent = fmt(p.reun);
       document.getElementById('proj-cont').textContent = fmt(p.cont);
-      document.getElementById('proj-funil').textContent = fmtPct(p.funil);
+      document.getElementById('proj-funil').textContent = fmtPct2(p.funil);
 
       document.getElementById('proj-delta').textContent = fmtSigned(p.delta);
       document.getElementById('proj-delta-detail').textContent = isMeta
@@ -1113,75 +1165,100 @@
         ? `jun ${fmtPct(p.base.rc)} · ${fmtSigned(p.rcDelta)} pp`
         : `real ${fmtPct(p.base.rc)} · ${fmtSigned(p.rcDelta)} pp`;
 
-      const volPart = p.agendDelta === 0
+      const volPart = (p.leadsDelta === 0 && p.agendDelta === 0)
         ? 'mantendo o volume de junho'
-        : `com ${fmtSigned(p.agendDelta)} agendas vs junho (${fmt(p.agend)} vs ${fmt(p.base.agend)})`;
+        : `com ${fmtSigned(p.leadsDelta)} leads e ${fmtSigned(p.agendDelta)} agendas vs junho`;
 
       let leitura = '';
       if (isMeta) {
-        leitura = `Meta montada para o <strong>mês seguinte</strong> ${volPart}: <strong>${fmt(p.cont)} contratos</strong> (${fmtSigned(p.delta)} vs junho). Comparecimento ${fmtPct(p.ar)} e fechamento ${fmtPct(p.rc)}. Os meses Jan–Jun permanecem inalterados.`;
-      } else if (Math.abs(p.delta) < 0.5 && p.agendDelta === 0 && Math.abs(p.arDelta) < 0.05 && Math.abs(p.rcDelta) < 0.05) {
+        leitura = `Meta montada para o <strong>mês seguinte</strong> ${volPart}: <strong>${fmt(p.cont)} contratos</strong> (${fmtSigned(p.delta)} vs junho). Funil Lead→Contrato ${fmtPct2(p.funil)} (Lead→Agend ${fmtPct(p.la)}). Os meses Jan–Jun permanecem inalterados.`;
+      } else if (Math.abs(p.delta) < 0.5 && p.leadsDelta === 0 && p.agendDelta === 0 && Math.abs(p.arDelta) < 0.05 && Math.abs(p.rcDelta) < 0.05) {
         leitura = `Cenário idêntico ao real de <strong>${p.base.label}</strong>. Ajuste volume ou taxas no Simulador e gere novamente para ver impacto.`;
       } else if (p.delta > 0) {
-        leitura = `Com as métricas escolhidas, a projeção fecha <strong>${fmt(p.cont)} contratos</strong> — ${fmtSigned(p.delta)} vs o real (${p.base.cont}). Comparecimento em ${fmtPct(p.ar)} e fechamento em ${fmtPct(p.rc)}.`;
+        leitura = `Com as métricas escolhidas, a projeção fecha <strong>${fmt(p.cont)} contratos</strong> — ${fmtSigned(p.delta)} vs o real (${p.base.cont}). Funil Lead→Contrato ${fmtPct2(p.funil)} · Lead→Agend ${fmtPct(p.la)}.`;
       } else {
-        leitura = `Com as métricas escolhidas, a projeção ficaria em <strong>${fmt(p.cont)} contratos</strong> (${fmtSigned(p.delta)} vs o real). Vale revisar volume e taxas no Simulador.`;
+        leitura = `Com as métricas escolhidas, a projeção ficaria em <strong>${fmt(p.cont)} contratos</strong> (${fmtSigned(p.delta)} vs o real). Vale revisar leads, agendas e taxas no Simulador.`;
       }
       document.getElementById('scenario-desc').innerHTML = leitura;
     }
 
     function updateSim() {
       const v = getSimValues();
-      const { base, agend, ar, rc, reun, cont, funil, delta, agendDelta } = v;
+      const { base, leads, agend, ar, rc, la, reun, cont, funil, delta, leadsDelta, agendDelta } = v;
       const isMeta = base.mode === 'meta';
       const periodRef = isMeta ? 'jun' : (simPeriod === 'semestre' ? 'H1' : MESES[simPeriod]);
 
+      // Mantém agendamentos dentro do teto de leads (e da faixa do período)
+      const agendInput = document.getElementById('sim-agend');
+      const periodMaxAgend = Math.round(base.agend * 2.5);
+      agendInput.max = Math.min(leads, Math.max(periodMaxAgend, agend));
+      if (+agendInput.value > leads) agendInput.value = leads;
+
       document.getElementById('sim-volume-caption').textContent = isMeta
-        ? `Referência Jun: ${fmt(base.agend)} agendas · ${base.reun} reuniões · ${base.cont} contratos — histórico intacto`
-        : `Baseline ${base.label}: ${fmt(base.agend)} agendas · ${base.reun} reuniões · ${base.cont} contratos`;
+        ? `Referência Jun: ${fmt(base.leads)} leads · ${fmt(base.agend)} agendas · ${base.cont} contratos — histórico intacto`
+        : `Baseline ${base.label}: ${fmt(base.leads)} leads · ${fmt(base.agend)} agendas · ${base.reun} reuniões · ${base.cont} contratos`;
       document.getElementById('sim-funnel-caption').textContent = isMeta
-        ? 'Meta do mês seguinte · compare com junho'
-        : `Resultado projetado · ${base.label}`;
+        ? 'Meta do mês seguinte · Lead → Agend → Reunião → Contrato'
+        : `Funil completo · ${base.label}`;
+      document.getElementById('sim-leads-label').textContent = fmt(leads);
       document.getElementById('sim-agend-label').textContent = fmt(agend);
       document.getElementById('sim-ar-label').textContent = fmtPct(ar);
       document.getElementById('sim-rc-label').textContent = fmtPct(rc);
       document.getElementById('sim-cont').textContent = fmt(cont);
       document.getElementById('sim-delta').textContent = fmtSigned(delta);
-      document.getElementById('sim-funil').textContent = fmtPct(funil);
+      document.getElementById('sim-funil').textContent = fmtPct2(funil);
 
-      const agendBarPct = Math.min(100, Math.max(18, (agend / (+document.getElementById('sim-agend').max)) * 100));
+      if (base.mode === 'meta') {
+        document.getElementById('sim-agend-bench').textContent =
+          `Referência Jun: ${fmt(base.agend)} · Lead → Agend atual ${fmtPct(la)} (jun ${fmtPct(base.la)})`;
+      } else {
+        document.getElementById('sim-agend-bench').textContent =
+          `Real do período: ${fmt(base.agend)} · Lead → Agend atual ${fmtPct(la)} (real ${fmtPct(base.la)})`;
+      }
+
+      const leadsBarPct = Math.min(100, Math.max(18, (leads / (+document.getElementById('sim-leads').max)) * 100));
+      const agendBarPct = Math.min(100, Math.max(10, (agend / Math.max(leads, 1)) * 100));
+      const reunBarPct = Math.min(100, Math.max(8, (reun / Math.max(leads, 1)) * 100));
+      const contBarPct = Math.min(100, Math.max(6, (cont / Math.max(leads, 1)) * 100));
 
       document.getElementById('sim-funnel').innerHTML = `
         <div class="funnel-mini-step">
+          <div class="lbl">Leads</div>
+          <div class="funnel-mini-bar"><div class="funnel-mini-fill" style="width:${leadsBarPct}%">${fmt(leads)}</div></div>
+          <div class="pct">${leadsDelta === 0 ? '100%' : fmtSigned(leadsDelta)}</div>
+        </div>
+        <div class="funnel-mini-step">
           <div class="lbl">Agendamentos</div>
           <div class="funnel-mini-bar"><div class="funnel-mini-fill" style="width:${agendBarPct}%">${fmt(agend)}</div></div>
-          <div class="pct">${agendDelta === 0 ? 'base' : fmtSigned(agendDelta)}</div>
+          <div class="pct">${fmtPct(la)}</div>
         </div>
         <div class="funnel-mini-step">
           <div class="lbl">Reuniões</div>
-          <div class="funnel-mini-bar"><div class="funnel-mini-fill" style="width:${Math.max(12, Math.min(100, ar * (agend / Math.max(base.agend, 1))))}%">${fmt(reun)}</div></div>
+          <div class="funnel-mini-bar"><div class="funnel-mini-fill" style="width:${reunBarPct}%">${fmt(reun)}</div></div>
           <div class="pct">${fmtPct(ar)}</div>
         </div>
         <div class="funnel-mini-step">
           <div class="lbl">Contratos</div>
-          <div class="funnel-mini-bar"><div class="funnel-mini-fill" style="width:${Math.max(10, funil * 4)}%">${fmt(cont)}</div></div>
-          <div class="pct">${fmtPct(funil)}</div>
+          <div class="funnel-mini-bar"><div class="funnel-mini-fill" style="width:${Math.max(contBarPct, 8)}%">${fmt(cont)}</div></div>
+          <div class="pct">${fmtPct2(funil)}</div>
         </div>
       `;
 
-      const volNote = agendDelta === 0 ? 'mesmo volume que jun' : `${fmtSigned(agendDelta)} agendas vs jun`;
+      const volNote = leadsDelta === 0 && agendDelta === 0
+        ? 'mesmo volume que jun'
+        : `${fmtSigned(leadsDelta)} leads · ${fmtSigned(agendDelta)} agendas vs jun`;
 
       let msg = '';
       if (isMeta) {
-        msg = `Montando a <strong>meta do mês seguinte</strong> (${volNote}): <strong>${fmt(cont)} contratos</strong> (${fmtSigned(delta)} vs junho). Jan–Jun não são alterados — só a meta.`;
-      } else if (Math.abs(delta) < 0.5 && agendDelta === 0) {
-        msg = `Baseline de <strong>${base.label}</strong>: ${fmt(agend)} agendas, ${fmtPct(ar)} de comparecimento e ${fmtPct(rc)} de fechamento → <strong>${base.cont} contratos</strong>. Mexa nos controles e clique em <strong>Gerar projeção</strong>.`;
+        msg = `Montando a <strong>meta do mês seguinte</strong> (${volNote}): <strong>${fmt(cont)} contratos</strong> (${fmtSigned(delta)} vs junho). Funil Lead→Contrato ${fmtPct2(funil)}.`;
+      } else if (Math.abs(delta) < 0.5 && leadsDelta === 0 && agendDelta === 0) {
+        msg = `Baseline de <strong>${base.label}</strong>: ${fmt(leads)} leads → ${fmt(agend)} agendas → <strong>${base.cont} contratos</strong> (funil ${fmtPct2(base.fc)}). Mexa nos controles e clique em <strong>Gerar projeção</strong>.`;
       } else if (delta < 0) {
         msg = `Em <strong>${base.label}</strong>, o resultado ficaria abaixo do real (${fmtSigned(delta)} vs ${base.cont} contratos).`;
       } else if (simPeriod === 'semestre' ? delta < 10 : delta < 3) {
-        msg = `Em <strong>${base.label}</strong>, o time fecharia <strong>${fmt(cont)} contratos</strong> (${fmtSigned(delta)} vs real).`;
+        msg = `Em <strong>${base.label}</strong>, o time fecharia <strong>${fmt(cont)} contratos</strong> (${fmtSigned(delta)} vs real) · funil ${fmtPct2(funil)}.`;
       } else {
-        msg = `Projeção forte em <strong>${base.label}</strong>: <strong>${fmt(cont)} contratos</strong> (${fmtSigned(delta)} / +${fmtPct(delta / base.cont * 100)} vs ${periodRef}).`;
+        msg = `Projeção forte em <strong>${base.label}</strong>: <strong>${fmt(cont)} contratos</strong> (${fmtSigned(delta)} / +${fmtPct(delta / base.cont * 100)} vs ${periodRef}) · funil Lead→Contrato ${fmtPct2(funil)}.`;
       }
       document.getElementById('sim-insight').innerHTML = msg;
     }
@@ -1210,6 +1287,7 @@
     initNav();
     renderSimPeriodTabs();
     applySimPeriod();
+    document.getElementById('sim-leads').addEventListener('input', updateSim);
     document.getElementById('sim-agend').addEventListener('input', updateSim);
     document.getElementById('sim-ar').addEventListener('input', updateSim);
     document.getElementById('sim-rc').addEventListener('input', updateSim);
