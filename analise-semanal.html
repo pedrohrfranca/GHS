@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grupo Hiper Saúde — Análise Semanal Jun–Jul 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <style>
+    :root {
+      --hiper-red: #D73027;
+      --hiper-blue: #3D5DA9;
+      --hiper-blue-light: #5A7BC4;
+      --hiper-gray: #4F4F4F;
+      --bg: #FFFFFF;
+      --surface: #F8F9FB;
+      --surface-2: #EEF1F6;
+      --border: rgba(79, 79, 79, 0.12);
+      --text: #4F4F4F;
+      --text-muted: #7A7A7A;
+      --success: #2F6B4F;
+      --warning: #C45A20;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito Sans', 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .deck { height: 100vh; position: relative; }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 48px 64px 80px;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hiper-blue);
+      font-weight: 700;
+    }
+
+    .brand-accent {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-accent::before {
+      content: '';
+      width: 24px;
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+    }
+
+    .logo { height: 56px; width: auto; object-fit: contain; }
+    .logo-lg { height: 88px; margin-bottom: 8px; }
+    .slide-logo { position: absolute; top: 48px; right: 64px; height: 40px; opacity: 0.95; }
+
+    .slide-title {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-top: 6px;
+      color: var(--hiper-gray);
+    }
+
+    .slide-subtitle { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
+
+    .title-slide {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .title-slide .hero-title {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 860px;
+      color: var(--hiper-gray);
+    }
+
+    .title-slide .hero-title span { color: var(--hiper-blue); }
+    .title-slide .hero-meta { margin-top: 24px; font-size: 16px; color: var(--text-muted); }
+
+    .title-line {
+      width: 120px;
+      height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+      margin: 28px auto;
+    }
+
+    .structure-map {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width: 720px;
+      margin: 40px auto 0;
+      text-align: left;
+    }
+
+    .structure-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px;
+    }
+
+    .structure-item .num {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--hiper-blue);
+      margin-bottom: 8px;
+    }
+
+    .structure-item h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--hiper-gray);
+    }
+
+    .structure-item p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-grid.four { grid-template-columns: repeat(4, 1fr); }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kpi-card.highlight {
+      border-color: rgba(61, 93, 169, 0.35);
+      background: linear-gradient(160deg, rgba(61,93,169,0.06) 0%, var(--surface) 60%);
+      border-top: 3px solid var(--hiper-blue);
+    }
+
+    .kpi-card.media { border-top: 3px solid var(--hiper-blue); }
+    .kpi-card.comercial { border-top: 3px solid var(--hiper-red); }
+
+    .kpi-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 8px 0 4px;
+      color: var(--hiper-gray);
+    }
+
+    .kpi-card.highlight .kpi-value { color: var(--hiper-blue); }
+    .kpi-detail { font-size: 11px; color: var(--text-muted); }
+
+    .kpi-delta {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .kpi-delta.up { color: var(--success); background: rgba(47, 107, 79, 0.1); }
+    .kpi-delta.down { color: var(--hiper-red); background: rgba(215, 48, 39, 0.08); }
+    .kpi-delta.flat { color: var(--text-muted); background: var(--surface-2); }
+
+    .tabs-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .tabs-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .tabs-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+
+    .tab {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .tab:hover { border-color: rgba(61,93,169,0.4); color: var(--hiper-gray); }
+
+    .tab.active {
+      background: rgba(61, 93, 169, 0.1);
+      border-color: var(--hiper-blue);
+      color: var(--hiper-blue);
+      font-weight: 700;
+    }
+
+    .tab.week.active {
+      background: rgba(215, 48, 39, 0.08);
+      border-color: var(--hiper-red);
+      color: var(--hiper-red);
+    }
+
+    .tab.total.active {
+      background: rgba(47, 107, 79, 0.1);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .tab:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .panel h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--hiper-gray);
+    }
+
+    .panel .caption {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .charts-row.three {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .chart-wrap {
+      flex: 1;
+      position: relative;
+      min-height: 180px;
+    }
+
+    .funnel-viz {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      justify-content: center;
+      flex: 1;
+    }
+
+    .funnel-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .funnel-label {
+      width: 120px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.3;
+    }
+
+    .funnel-bar-wrap {
+      flex: 1;
+      height: 40px;
+      background: var(--surface-2);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .funnel-bar {
+      height: 100%;
+      background: var(--hiper-blue);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-weight: 700;
+      font-size: 13px;
+      color: #fff;
+      transition: width 0.45s ease;
+      min-width: fit-content;
+    }
+
+    .funnel-step:nth-child(2) .funnel-bar { background: var(--hiper-blue-light); }
+    .funnel-step:nth-child(3) .funnel-bar { background: var(--hiper-red); }
+    .funnel-step:nth-child(4) .funnel-bar { background: var(--hiper-gray); }
+
+    .funnel-rate {
+      width: 64px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--hiper-blue);
+      text-align: right;
+    }
+
+    .insight-banner {
+      padding: 12px 16px;
+      background: rgba(61, 93, 169, 0.06);
+      border-left: 3px solid var(--hiper-blue);
+      border-radius: 0 8px 8px 0;
+      font-size: 13px;
+      color: var(--hiper-gray);
+      line-height: 1.5;
+      margin-top: 14px;
+    }
+
+    .insight-banner strong { color: var(--hiper-blue); }
+    .insight-banner.warn {
+      border-left-color: var(--hiper-red);
+      background: rgba(215, 48, 39, 0.05);
+    }
+    .insight-banner.warn strong { color: var(--hiper-red); }
+    .insight-banner.pending {
+      border-left-color: var(--warning);
+      background: rgba(196, 90, 32, 0.06);
+    }
+    .insight-banner.pending strong { color: var(--warning); }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .month-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .month-card h3 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .month-card .meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .stat-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .stat-line:last-child { border-bottom: none; }
+    .stat-line .label { color: var(--text-muted); }
+    .stat-line .value { font-weight: 800; color: var(--hiper-gray); }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .section-tag.media {
+      color: var(--hiper-blue);
+      background: rgba(61, 93, 169, 0.1);
+    }
+
+    .section-tag.comercial {
+      color: var(--hiper-red);
+      background: rgba(215, 48, 39, 0.08);
+    }
+
+    .data-table-wrap {
+      flex: 1;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--surface-2);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-align: right;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    thead th:first-child,
+    thead th:nth-child(2) { text-align: left; }
+
+    tbody td {
+      padding: 11px 14px;
+      text-align: right;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+      color: var(--hiper-gray);
+      background: #fff;
+    }
+
+    tbody td:first-child,
+    tbody td:nth-child(2) { text-align: left; font-weight: 700; }
+
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr.month-sep td { background: rgba(61, 93, 169, 0.04); }
+    tbody tr.total-row td {
+      background: rgba(47, 107, 79, 0.06);
+      font-weight: 800;
+    }
+
+    .placeholder {
+      color: var(--text-muted);
+      font-weight: 600;
+      opacity: 0.55;
+    }
+
+    .legend-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+    }
+
+    .nav-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--hiper-red) 50%, var(--hiper-blue) 50%);
+    }
+
+    .nav-dots { display: flex; gap: 8px; }
+
+    .nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-dot.active {
+      background: var(--hiper-blue);
+      border-color: var(--hiper-blue);
+      transform: scale(1.2);
+    }
+
+    .nav-buttons { display: flex; gap: 8px; }
+
+    .nav-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--hiper-gray);
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--hiper-blue);
+      color: var(--hiper-blue);
+      background: rgba(61, 93, 169, 0.06);
+    }
+
+    .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .slide-counter { font-size: 13px; color: var(--text-muted); }
+    .keyboard-hint { font-size: 11px; color: var(--text-muted); opacity: 0.6; }
+
+    @media (max-width: 1200px) {
+      .slide { padding: 32px 32px 80px; }
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+      .charts-row, .charts-row.three, .compare-grid, .structure-map {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+
+    <!-- 0: Capa + mapa da estrutura -->
+    <section class="slide title-slide active" data-slide="0">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="logo logo-lg">
+      <div class="title-line"></div>
+      <h1 class="hero-title">Análise <span>Semanal</span></h1>
+      <div class="structure-map">
+        <div class="structure-item">
+          <div class="num">Slide 2</div>
+          <h3>Detalhe semanal</h3>
+        </div>
+        <div class="structure-item">
+          <div class="num">Slide 3</div>
+          <h3>Evolução</h3>
+        </div>
+        <div class="structure-item">
+          <div class="num">Slide 4</div>
+          <h3>Tabela</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1: Detalhe semanal -->
+    <section class="slide" data-slide="1">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Detalhe semanal</div>
+          <h2 class="slide-title">KPIs e funil por semana</h2>
+          <p class="slide-subtitle">Selecione o mês e a semana · CPL calculado = investimento ÷ leads</p>
+        </div>
+      </div>
+
+      <div class="tabs-row">
+        <div class="tabs-group" id="month-tabs"></div>
+        <div class="tabs-group" id="week-tabs"></div>
+      </div>
+
+      <div class="kpi-grid" id="week-kpis"></div>
+
+      <div class="charts-row">
+        <div class="panel">
+          <h3>Funil da semana</h3>
+          <p class="caption" id="funnel-caption">Lead → Agenda → Reunião → Contrato</p>
+          <div class="funnel-viz" id="week-funnel"></div>
+        </div>
+        <div class="panel">
+          <h3>Leitura rápida</h3>
+          <p class="caption">Conversão e eficiência no período selecionado</p>
+          <div id="week-rates"></div>
+          <div class="insight-banner pending" id="week-insight" style="margin-top:auto;">
+            Preencha os dados semanais para gerar insights automáticos.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2: Evolução S1→S5 -->
+    <section class="slide" data-slide="2">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Evolução semanal</div>
+          <h2 class="slide-title">Tendência S1 → S5</h2>
+          <p class="slide-subtitle">Comparativo visual Junho vs Julho nas mesmas faixas de dias</p>
+        </div>
+      </div>
+      <div class="tabs-row">
+        <div class="tabs-group" id="metric-tabs"></div>
+      </div>
+      <div class="charts-row three" style="flex:1;">
+        <div class="panel" style="grid-column: 1 / -1;">
+          <h3 id="trend-title">Leads por semana</h3>
+          <p class="caption">Volumes semanais · Junho (azul) × Julho (vermelho)</p>
+          <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
+          <div class="legend-row">
+            <span><span class="legend-dot" style="background:var(--hiper-blue)"></span>Junho</span>
+            <span><span class="legend-dot" style="background:var(--hiper-red)"></span>Julho</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3: Tabela completa -->
+    <section class="slide" data-slide="3">
+      <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="slide-logo">
+      <div class="slide-header">
+        <div>
+          <div class="brand brand-accent">Dados detalhados</div>
+          <h2 class="slide-title">Tabela semanal completa</h2>
+          <p class="slide-subtitle">Estrutura pronta — substitua os placeholders pelos números reais</p>
+        </div>
+      </div>
+      <div class="data-table-wrap">
+        <table id="weekly-table">
+          <thead>
+            <tr>
+              <th>Mês</th>
+              <th>Semana</th>
+              <th>Leads</th>
+              <th>Investimento</th>
+              <th>CPL</th>
+              <th>Agendamentos</th>
+              <th>Reuniões realizadas</th>
+              <th>Contratos</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <nav class="nav-bar">
+    <span class="keyboard-hint">← → ou clique para navegar · F11 para tela cheia</span>
+    <div class="nav-dots" id="nav-dots"></div>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span class="slide-counter" id="slide-counter">1 / 5</span>
+      <div class="nav-buttons">
+        <button class="nav-btn" id="btn-prev" disabled>Anterior</button>
+        <button class="nav-btn" id="btn-next">Próximo</button>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    /*
+     * ESTRUTURA DE DADOS
+     * Semanas fixas por faixa de dias:
+     *   S1 = 1–7 | S2 = 8–14 | S3 = 15–21 | S4 = 22–28 | S5 = 29–fim do mês
+     * CPL é calculado automaticamente (investimento / leads) quando ambos existem.
+     * Deixe null onde ainda não houver número.
+     */
+    const WEEK_DEFS = {
+      jun: [
+        { id: 'S1', label: 'S1', range: '1–7' },
+        { id: 'S2', label: 'S2', range: '8–14' },
+        { id: 'S3', label: 'S3', range: '15–21' },
+        { id: 'S4', label: 'S4', range: '22–28' },
+        { id: 'S5', label: '2 dias', range: '29–30' }
+      ],
+      jul: [
+        { id: 'S1', label: 'S1', range: '1–7' },
+        { id: 'S2', label: 'S2', range: '8–14' },
+        { id: 'S3', label: 'S3', range: '15–21' },
+        { id: 'S4', label: 'S4', range: '22–27' },
+        { id: 'S5', label: '3 dias', range: '29–31' }
+      ]
+    };
+
+    const MONTHS = {
+      jun: { key: 'jun', label: 'Junho', short: 'Jun' },
+      jul: { key: 'jul', label: 'Julho', short: 'Jul' }
+    };
+
+    // Atualizado com resultados reais · Julho parcial até 27/07
+    const DATA = {
+      jun: {
+        S1: { leads: 177, investimento: 7708, agendamentos: 18, reunioes: 17, contratos: 1 },
+        S2: { leads: 171, investimento: 6978, agendamentos: 21, reunioes: 15, contratos: 1 },
+        S3: { leads: 130, investimento: 6584, agendamentos: 23, reunioes: 13, contratos: 0 },
+        S4: { leads: 123, investimento: 6312, agendamentos: 15, reunioes: 9, contratos: 1 },
+        S5: { leads: 41,  investimento: 1203, agendamentos: 6,  reunioes: 6,  contratos: 2 }
+      },
+      jul: {
+        S1: { leads: 115, investimento: 7063, agendamentos: 12, reunioes: 10, contratos: 0 },
+        S2: { leads: 173, investimento: 6959, agendamentos: 20, reunioes: 16, contratos: 0 },
+        S3: { leads: 154, investimento: 6914, agendamentos: 24, reunioes: 14, contratos: 1 },
+        S4: { leads: 125, investimento: 4770, agendamentos: 17, reunioes: 8,  contratos: 3 },
+        S5: { leads: null, investimento: null, agendamentos: null, reunioes: null, contratos: null }
+      }
+    };
+
+    const METRICS = [
+      { id: 'leads', label: 'Leads', group: 'media' },
+      { id: 'investimento', label: 'Investimento', group: 'media', money: true },
+      { id: 'cpl', label: 'CPL', group: 'media', money: true, derived: true },
+      { id: 'agendamentos', label: 'Agendamentos', group: 'comercial' },
+      { id: 'reunioes', label: 'Reuniões realizadas', group: 'comercial' },
+      { id: 'contratos', label: 'Contratos', group: 'comercial' }
+    ];
+
+    const fmt = n => n == null ? '—' : Math.round(n).toLocaleString('pt-BR');
+    const fmtBRL = n => n == null ? '—' : 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const fmtBRLDec = n => n == null ? '—' : 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtPct = n => n == null ? '—' : n.toFixed(1).replace('.', ',') + '%';
+
+    function cplOf(row) {
+      if (!row || row.leads == null || row.investimento == null || row.leads === 0) return null;
+      return row.investimento / row.leads;
+    }
+
+    function enrich(row) {
+      if (!row) return null;
+      return { ...row, cpl: cplOf(row) };
+    }
+
+    function sumMonth(monthKey) {
+      const weeks = DATA[monthKey];
+      const keys = ['leads', 'investimento', 'agendamentos', 'reunioes', 'contratos'];
+      const total = {};
+      keys.forEach(k => {
+        const vals = Object.values(weeks).map(w => w[k]).filter(v => v != null);
+        total[k] = vals.length ? vals.reduce((a, b) => a + b, 0) : null;
+      });
+      total.cpl = cplOf(total);
+      return total;
+    }
+
+    function rate(num, den) {
+      if (num == null || den == null || den === 0) return null;
+      return (num / den) * 100;
+    }
+
+    // ——— State ———
+    let currentSlide = 0;
+    let selectedMonth = 'jun';
+    let selectedWeek = 'S1';
+    let selectedMetric = 'leads';
+    let trendChart = null;
+
+    const slides = () => [...document.querySelectorAll('.slide')];
+
+    function goTo(i) {
+      const list = slides();
+      if (i < 0 || i >= list.length) return;
+      list[currentSlide].classList.remove('active');
+      currentSlide = i;
+      list[currentSlide].classList.add('active');
+      updateNav();
+      if (currentSlide === 1) renderWeekDetail();
+      if (currentSlide === 2) renderTrend();
+    }
+
+    function updateNav() {
+      const total = slides().length;
+      document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${total}`;
+      document.getElementById('btn-prev').disabled = currentSlide === 0;
+      document.getElementById('btn-next').disabled = currentSlide === total - 1;
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === currentSlide);
+      });
+    }
+
+    function buildNav() {
+      const dots = document.getElementById('nav-dots');
+      dots.innerHTML = slides().map((_, i) =>
+        `<button class="nav-dot ${i === 0 ? 'active' : ''}" data-i="${i}" aria-label="Slide ${i + 1}"></button>`
+      ).join('');
+      dots.querySelectorAll('.nav-dot').forEach(d => {
+        d.addEventListener('click', () => goTo(+d.dataset.i));
+      });
+    }
+
+    // ——— Slide 1: detalhe semanal ———
+    function renderMonthTabs() {
+      const el = document.getElementById('month-tabs');
+      el.innerHTML = `
+        <span class="tabs-label">Mês</span>
+        ${Object.values(MONTHS).map(m => `
+          <button class="tab ${m.key === selectedMonth ? 'active' : ''}" data-month="${m.key}">${m.label}</button>
+        `).join('')}
+      `;
+      el.querySelectorAll('[data-month]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedMonth = btn.dataset.month;
+          selectedWeek = 'S1';
+          renderMonthTabs();
+          renderWeekTabs();
+          renderWeekDetail();
+        });
+      });
+    }
+
+    function renderWeekTabs() {
+      const el = document.getElementById('week-tabs');
+      const weeks = WEEK_DEFS[selectedMonth];
+      el.innerHTML = `
+        <span class="tabs-label">Semana</span>
+        <button class="tab total ${selectedWeek === 'TOTAL' ? 'active' : ''}" data-week="TOTAL">Mês todo</button>
+        ${weeks.map(w => `
+          <button class="tab week ${w.id === selectedWeek ? 'active' : ''}" data-week="${w.id}">
+            ${w.label} <span style="opacity:.65;font-weight:600">(${w.range})</span>
+          </button>
+        `).join('')}
+      `;
+      el.querySelectorAll('[data-week]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedWeek = btn.dataset.week;
+          renderWeekTabs();
+          renderWeekDetail();
+        });
+      });
+    }
+
+    function getSelectedRow() {
+      if (selectedWeek === 'TOTAL') return sumMonth(selectedMonth);
+      return enrich(DATA[selectedMonth][selectedWeek]);
+    }
+
+    function renderWeekDetail() {
+      const row = getSelectedRow();
+      const weekMeta = selectedWeek === 'TOTAL'
+        ? { label: 'Mês todo', range: selectedMonth === 'jun' ? '1–30' : '1–27' }
+        : WEEK_DEFS[selectedMonth].find(w => w.id === selectedWeek);
+
+      const kpis = document.getElementById('week-kpis');
+      const items = [
+        { label: 'Leads', value: fmt(row?.leads), cls: 'media', detail: 'Mídia' },
+        { label: 'Investimento', value: fmtBRL(row?.investimento), cls: 'media', detail: 'Mídia' },
+        { label: 'CPL', value: fmtBRLDec(row?.cpl), cls: 'media highlight', detail: 'Invest. ÷ leads' },
+        { label: 'Agendamentos', value: fmt(row?.agendamentos), cls: 'comercial', detail: 'Comercial' },
+        { label: 'Reuniões realizadas', value: fmt(row?.reunioes), cls: 'comercial', detail: 'Comercial' },
+        { label: 'Contratos', value: fmt(row?.contratos), cls: 'comercial highlight', detail: 'Comercial' }
+      ];
+
+      kpis.innerHTML = items.map(k => `
+        <div class="kpi-card ${k.cls}">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value">${k.value}</div>
+          <div class="kpi-detail">${k.detail}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('funnel-caption').textContent =
+        `${MONTHS[selectedMonth].label} · ${weekMeta.label} (${weekMeta.range})`;
+
+      const leads = row?.leads;
+      const ag = row?.agendamentos;
+      const reun = row?.reunioes;
+      const cont = row?.contratos;
+      const max = Math.max(leads || 0, ag || 0, reun || 0, cont || 0, 1);
+
+      const steps = [
+        { label: 'Leads', value: leads, rate: null },
+        { label: 'Agendamentos', value: ag, rate: rate(ag, leads) },
+        { label: 'Reuniões realizadas', value: reun, rate: rate(reun, ag) },
+        { label: 'Contratos', value: cont, rate: rate(cont, reun) }
+      ];
+
+      document.getElementById('week-funnel').innerHTML = steps.map(s => {
+        const width = s.value == null ? 8 : Math.max(8, (s.value / max) * 100);
+        return `
+          <div class="funnel-step">
+            <div class="funnel-label">${s.label}</div>
+            <div class="funnel-bar-wrap">
+              <div class="funnel-bar" style="width:${width}%">${fmt(s.value)}</div>
+            </div>
+            <div class="funnel-rate">${s.rate == null ? '' : fmtPct(s.rate)}</div>
+          </div>
+        `;
+      }).join('');
+
+      const ratesEl = document.getElementById('week-rates');
+      const rates = [
+        { label: 'Lead → Agenda', value: rate(ag, leads) },
+        { label: 'Agenda → Reunião', value: rate(reun, ag) },
+        { label: 'Reunião → Contrato', value: rate(cont, reun) },
+        { label: 'Lead → Contrato', value: rate(cont, leads) }
+      ];
+      ratesEl.innerHTML = rates.map(r => `
+        <div class="stat-line">
+          <span class="label">${r.label}</span>
+          <span class="value">${fmtPct(r.value)}</span>
+        </div>
+      `).join('');
+
+      const insight = document.getElementById('week-insight');
+      if (leads == null && ag == null) {
+        insight.className = 'insight-banner pending';
+        insight.innerHTML = '<strong>Sem dados nesta semana.</strong> Preencha o objeto DATA no script para liberar a leitura.';
+      } else {
+        insight.className = 'insight-banner';
+        insight.innerHTML = `${MONTHS[selectedMonth].label} ${weekMeta.label}: <strong>${fmt(leads)}</strong> leads → <strong>${fmt(cont)}</strong> contratos · funil Lead→Contrato <strong>${fmtPct(rate(cont, leads))}</strong>`;
+      }
+    }
+
+    // ——— Slide 3: tendência ———
+    function renderMetricTabs() {
+      const el = document.getElementById('metric-tabs');
+      el.innerHTML = `
+        <span class="tabs-label">Métrica</span>
+        ${METRICS.filter(m => !m.derived || m.id === 'cpl').map(m => `
+          <button class="tab ${m.id === selectedMetric ? 'active' : ''} ${m.group === 'comercial' ? 'week' : ''}"
+            data-metric="${m.id}">${m.label}</button>
+        `).join('')}
+      `;
+      el.querySelectorAll('[data-metric]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedMetric = btn.dataset.metric;
+          renderMetricTabs();
+          renderTrend();
+        });
+      });
+    }
+
+    function seriesFor(monthKey, metricId) {
+      return WEEK_DEFS[monthKey].map(w => {
+        const row = enrich(DATA[monthKey][w.id]);
+        return row ? row[metricId] : null;
+      });
+    }
+
+    function renderTrend() {
+      const metric = METRICS.find(m => m.id === selectedMetric);
+      document.getElementById('trend-title').textContent = `${metric.label} por semana`;
+
+      const labels = WEEK_DEFS.jun.map(w => `${w.label}\n(${w.range})`);
+      const junData = seriesFor('jun', selectedMetric);
+      const julData = seriesFor('jul', selectedMetric);
+      const isMoney = metric.money;
+
+      const ctx = document.getElementById('chartTrend');
+      if (trendChart) trendChart.destroy();
+
+      const empty = junData.every(v => v == null) && julData.every(v => v == null);
+
+      trendChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: WEEK_DEFS.jun.map(w => w.label),
+          datasets: [
+            {
+              label: 'Junho',
+              data: junData,
+              backgroundColor: 'rgba(61, 93, 169, 0.75)',
+              borderRadius: 6,
+              maxBarThickness: 48
+            },
+            {
+              label: 'Julho',
+              data: julData,
+              backgroundColor: 'rgba(215, 48, 39, 0.75)',
+              borderRadius: 6,
+              maxBarThickness: 48
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              anchor: 'end',
+              align: 'top',
+              font: { weight: '800', size: 15, family: 'Nunito Sans' },
+              color: '#4F4F4F',
+              formatter: v => {
+                if (v == null) return '';
+                if (empty) return '';
+                return isMoney
+                  ? (selectedMetric === 'cpl'
+                    ? v.toLocaleString('pt-BR', { maximumFractionDigits: 0 })
+                    : (v >= 1000 ? (v / 1000).toFixed(1).replace('.', ',') + 'k' : fmt(v)))
+                  : fmt(v);
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: ctx => {
+                  const v = ctx.parsed.y;
+                  if (v == null) return `${ctx.dataset.label}: —`;
+                  return `${ctx.dataset.label}: ${isMoney ? fmtBRLDec(v) : fmt(v)}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { font: { family: 'Nunito Sans', weight: '600' }, color: '#7A7A7A' }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(79,79,79,0.08)' },
+              ticks: {
+                font: { family: 'Nunito Sans' },
+                color: '#7A7A7A',
+                callback: v => isMoney && selectedMetric === 'investimento'
+                  ? (v >= 1000 ? (v / 1000) + 'k' : v)
+                  : v
+              }
+            }
+          }
+        },
+        plugins: [ChartDataLabels]
+      });
+    }
+
+    // ——— Slide 4: tabela ———
+    function renderTable() {
+      const tbody = document.querySelector('#weekly-table tbody');
+      const rows = [];
+
+      Object.values(MONTHS).forEach(m => {
+        WEEK_DEFS[m.key].forEach((w, i) => {
+          const row = enrich(DATA[m.key][w.id]);
+          rows.push(`
+            <tr class="${i === 0 ? 'month-sep' : ''}">
+              <td>${i === 0 ? m.label : ''}</td>
+              <td>${w.label} (${w.range})</td>
+              <td class="${row.leads == null ? 'placeholder' : ''}">${fmt(row.leads)}</td>
+              <td class="${row.investimento == null ? 'placeholder' : ''}">${fmtBRL(row.investimento)}</td>
+              <td class="${row.cpl == null ? 'placeholder' : ''}">${fmtBRLDec(row.cpl)}</td>
+              <td class="${row.agendamentos == null ? 'placeholder' : ''}">${fmt(row.agendamentos)}</td>
+              <td class="${row.reunioes == null ? 'placeholder' : ''}">${fmt(row.reunioes)}</td>
+              <td class="${row.contratos == null ? 'placeholder' : ''}">${fmt(row.contratos)}</td>
+            </tr>
+          `);
+        });
+        const tot = sumMonth(m.key);
+        rows.push(`
+          <tr class="total-row">
+            <td></td>
+            <td>Total ${m.short}</td>
+            <td>${fmt(tot.leads)}</td>
+            <td>${fmtBRL(tot.investimento)}</td>
+            <td>${fmtBRLDec(tot.cpl)}</td>
+            <td>${fmt(tot.agendamentos)}</td>
+            <td>${fmt(tot.reunioes)}</td>
+            <td>${fmt(tot.contratos)}</td>
+          </tr>
+        `);
+      });
+
+      tbody.innerHTML = rows.join('');
+    }
+
+    // ——— Init ———
+    function init() {
+      buildNav();
+      renderMonthTabs();
+      renderWeekTabs();
+      renderWeekDetail();
+      renderMetricTabs();
+      renderTable();
+      updateNav();
+
+      document.getElementById('btn-prev').addEventListener('click', () => goTo(currentSlide - 1));
+      document.getElementById('btn-next').addEventListener('click', () => goTo(currentSlide + 1));
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') goTo(currentSlide + 1);
+        if (e.key === 'ArrowLeft' || e.key === 'PageUp') goTo(currentSlide - 1);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
