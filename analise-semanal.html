@@ -209,17 +209,22 @@
     .kpi-detail { font-size: 11px; color: var(--text-muted); }
 
     .kpi-delta {
-      display: inline-block;
-      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 8px;
       font-size: 11px;
       font-weight: 700;
-      padding: 2px 7px;
+      padding: 3px 8px;
       border-radius: 4px;
+      width: fit-content;
+      line-height: 1.3;
     }
 
     .kpi-delta.up { color: var(--success); background: rgba(47, 107, 79, 0.1); }
     .kpi-delta.down { color: var(--hiper-red); background: rgba(215, 48, 39, 0.08); }
     .kpi-delta.flat { color: var(--text-muted); background: var(--surface-2); }
+    .kpi-delta .vs { font-weight: 600; opacity: 0.75; }
 
     .tabs-row {
       display: flex;
@@ -397,6 +402,11 @@
       background: rgba(215, 48, 39, 0.05);
     }
     .insight-banner.warn strong { color: var(--hiper-red); }
+    .insight-banner.ok {
+      border-left-color: var(--success);
+      background: rgba(47, 107, 79, 0.06);
+    }
+    .insight-banner.ok strong { color: var(--success); }
     .insight-banner.pending {
       border-left-color: var(--warning);
       background: rgba(196, 90, 32, 0.06);
@@ -647,7 +657,7 @@
         <div>
           <div class="brand brand-accent">Detalhe semanal</div>
           <h2 class="slide-title">KPIs e funil por semana</h2>
-          <p class="slide-subtitle">Selecione o mês e a semana · CPL calculado = investimento ÷ leads</p>
+          <p class="slide-subtitle">Comparação automática vs semana anterior · CPL = investimento ÷ leads</p>
         </div>
       </div>
 
@@ -666,7 +676,7 @@
         </div>
         <div class="panel">
           <h3>Leitura rápida</h3>
-          <p class="caption">Conversão e eficiência no período selecionado</p>
+          <p class="caption" id="rates-caption">Conversão e eficiência no período selecionado</p>
           <div id="week-rates"></div>
           <div class="insight-banner pending" id="week-insight" style="margin-top:auto;">
             Preencha os dados semanais para gerar insights automáticos.
@@ -919,20 +929,140 @@
       return enrich(DATA[selectedMonth][selectedWeek]);
     }
 
+    /** Semana (ou mês) imediatamente anterior para comparação WoW */
+    function getPrevContext() {
+      if (selectedWeek === 'TOTAL') {
+        if (selectedMonth === 'jul') {
+          return {
+            label: 'Junho',
+            row: sumMonth('jun')
+          };
+        }
+        return null;
+      }
+
+      const weeks = WEEK_DEFS[selectedMonth];
+      const idx = weeks.findIndex(w => w.id === selectedWeek);
+
+      if (idx > 0) {
+        const prev = weeks[idx - 1];
+        const row = enrich(DATA[selectedMonth][prev.id]);
+        if (row?.leads == null && row?.agendamentos == null) return null;
+        return {
+          label: `${MONTHS[selectedMonth].short} ${prev.label}`,
+          row
+        };
+      }
+
+      // S1 de julho → última semana com dados de junho
+      if (selectedMonth === 'jul') {
+        for (let i = WEEK_DEFS.jun.length - 1; i >= 0; i--) {
+          const w = WEEK_DEFS.jun[i];
+          const row = enrich(DATA.jun[w.id]);
+          if (row?.leads != null || row?.agendamentos != null) {
+            return { label: `Jun ${w.label}`, row };
+          }
+        }
+      }
+
+      return null;
+    }
+
+    /**
+     * invert: true quando menor é melhor (ex.: CPL)
+     * Retorna sentiment 'up' = evolução (verde) | 'down' = involução (vermelho)
+     */
+    function calcDelta(current, previous, { invert = false, money = false } = {}) {
+      if (current == null || previous == null) return null;
+      const abs = current - previous;
+      const pct = previous === 0
+        ? (current === 0 ? 0 : null)
+        : (abs / Math.abs(previous)) * 100;
+
+      let sentiment = 'flat';
+      if (abs !== 0) {
+        const rose = abs > 0;
+        sentiment = invert
+          ? (rose ? 'down' : 'up')
+          : (rose ? 'up' : 'down');
+      }
+
+      const arrow = abs > 0 ? '↑' : abs < 0 ? '↓' : '→';
+      const sign = abs > 0 ? '+' : '';
+      const absTxt = money
+        ? (Math.abs(abs) >= 100
+          ? sign + 'R$ ' + Math.round(Math.abs(abs)).toLocaleString('pt-BR')
+          : sign + 'R$ ' + Math.abs(abs).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+        : sign + Math.round(abs).toLocaleString('pt-BR');
+
+      const pctTxt = pct == null
+        ? ''
+        : ` (${sign}${pct.toFixed(0).replace('.', ',')}%)`;
+
+      const word = sentiment === 'up' ? 'Evolução' : sentiment === 'down' ? 'Involução' : 'Estável';
+
+      return { abs, pct, sentiment, arrow, absTxt, pctTxt, word };
+    }
+
+    function deltaBadge(delta, vsLabel) {
+      if (!delta) {
+        return `<span class="kpi-delta flat">Sem base anterior</span>`;
+      }
+      return `<span class="kpi-delta ${delta.sentiment}">${delta.arrow} ${delta.absTxt}${delta.pctTxt} <span class="vs">vs ${vsLabel}</span></span>`;
+    }
+
     function renderWeekDetail() {
       const row = getSelectedRow();
+      const prev = getPrevContext();
       const weekMeta = selectedWeek === 'TOTAL'
         ? { label: 'Mês todo', range: selectedMonth === 'jun' ? '1–30' : '1–27' }
         : WEEK_DEFS[selectedMonth].find(w => w.id === selectedWeek);
 
+      const vsLabel = prev?.label || '—';
       const kpis = document.getElementById('week-kpis');
       const items = [
-        { label: 'Leads', value: fmt(row?.leads), cls: 'media', detail: 'Mídia' },
-        { label: 'Investimento', value: fmtBRL(row?.investimento), cls: 'media', detail: 'Mídia' },
-        { label: 'CPL', value: fmtBRLDec(row?.cpl), cls: 'media highlight', detail: 'Invest. ÷ leads' },
-        { label: 'Agendamentos', value: fmt(row?.agendamentos), cls: 'comercial', detail: 'Comercial' },
-        { label: 'Reuniões realizadas', value: fmt(row?.reunioes), cls: 'comercial', detail: 'Comercial' },
-        { label: 'Contratos', value: fmt(row?.contratos), cls: 'comercial highlight', detail: 'Comercial' }
+        {
+          label: 'Leads',
+          value: fmt(row?.leads),
+          cls: 'media',
+          detail: 'Mídia',
+          delta: calcDelta(row?.leads, prev?.row?.leads)
+        },
+        {
+          label: 'Investimento',
+          value: fmtBRL(row?.investimento),
+          cls: 'media',
+          detail: 'Mídia',
+          delta: calcDelta(row?.investimento, prev?.row?.investimento, { money: true })
+        },
+        {
+          label: 'CPL',
+          value: fmtBRLDec(row?.cpl),
+          cls: 'media highlight',
+          detail: 'Menor = melhor',
+          delta: calcDelta(row?.cpl, prev?.row?.cpl, { invert: true, money: true })
+        },
+        {
+          label: 'Agendamentos',
+          value: fmt(row?.agendamentos),
+          cls: 'comercial',
+          detail: 'Comercial',
+          delta: calcDelta(row?.agendamentos, prev?.row?.agendamentos)
+        },
+        {
+          label: 'Reuniões realizadas',
+          value: fmt(row?.reunioes),
+          cls: 'comercial',
+          detail: 'Comercial',
+          delta: calcDelta(row?.reunioes, prev?.row?.reunioes)
+        },
+        {
+          label: 'Contratos',
+          value: fmt(row?.contratos),
+          cls: 'comercial highlight',
+          detail: 'Comercial',
+          delta: calcDelta(row?.contratos, prev?.row?.contratos)
+        }
       ];
 
       kpis.innerHTML = items.map(k => `
@@ -940,11 +1070,13 @@
           <div class="kpi-label">${k.label}</div>
           <div class="kpi-value">${k.value}</div>
           <div class="kpi-detail">${k.detail}</div>
+          ${prev ? deltaBadge(k.delta, vsLabel) : `<span class="kpi-delta flat">Sem base anterior</span>`}
         </div>
       `).join('');
 
       document.getElementById('funnel-caption').textContent =
-        `${MONTHS[selectedMonth].label} · ${weekMeta.label} (${weekMeta.range})`;
+        `${MONTHS[selectedMonth].label} · ${weekMeta.label} (${weekMeta.range})` +
+        (prev ? ` · vs ${prev.label}` : '');
 
       const leads = row?.leads;
       const ag = row?.agendamentos;
@@ -972,24 +1104,69 @@
         `;
       }).join('');
 
+      const prevLeads = prev?.row?.leads;
+      const prevAg = prev?.row?.agendamentos;
+      const prevReun = prev?.row?.reunioes;
+      const prevCont = prev?.row?.contratos;
+      const showCompare = selectedWeek === 'TOTAL' && !!prev;
+
       const ratesEl = document.getElementById('week-rates');
+      document.getElementById('rates-caption').textContent = showCompare
+        ? `Conversão no mês · delta vs ${prev.label}`
+        : 'Conversão e eficiência no período selecionado';
+
       const rates = [
-        { label: 'Lead → Agenda', value: rate(ag, leads) },
-        { label: 'Agenda → Reunião', value: rate(reun, ag) },
-        { label: 'Reunião → Contrato', value: rate(cont, reun) },
-        { label: 'Lead → Contrato', value: rate(cont, leads) }
+        {
+          label: 'Lead → Agenda',
+          value: rate(ag, leads),
+          delta: calcDelta(rate(ag, leads), rate(prevAg, prevLeads))
+        },
+        {
+          label: 'Agenda → Reunião',
+          value: rate(reun, ag),
+          delta: calcDelta(rate(reun, ag), rate(prevReun, prevAg))
+        },
+        {
+          label: 'Reunião → Contrato',
+          value: rate(cont, reun),
+          delta: calcDelta(rate(cont, reun), rate(prevCont, prevReun))
+        },
+        {
+          label: 'Lead → Contrato',
+          value: rate(cont, leads),
+          delta: calcDelta(rate(cont, leads), rate(prevCont, prevLeads))
+        }
       ];
-      ratesEl.innerHTML = rates.map(r => `
-        <div class="stat-line">
-          <span class="label">${r.label}</span>
-          <span class="value">${fmtPct(r.value)}</span>
-        </div>
-      `).join('');
+      ratesEl.innerHTML = rates.map(r => {
+        const d = r.delta;
+        const deltaHtml = !showCompare || !d
+          ? ''
+          : `<span class="kpi-delta ${d.sentiment}" style="margin-top:0;margin-left:8px;">${d.arrow} ${d.pct == null ? d.absTxt : (d.abs > 0 ? '+' : '') + d.pct.toFixed(1).replace('.', ',') + ' pp'}</span>`;
+        return `
+          <div class="stat-line">
+            <span class="label">${r.label}</span>
+            <span class="value" style="display:inline-flex;align-items:center;">${fmtPct(r.value)}${deltaHtml}</span>
+          </div>
+        `;
+      }).join('');
 
       const insight = document.getElementById('week-insight');
       if (leads == null && ag == null) {
         insight.className = 'insight-banner pending';
         insight.innerHTML = '<strong>Sem dados nesta semana.</strong> Preencha o objeto DATA no script para liberar a leitura.';
+      } else if (showCompare) {
+        const dLeads = calcDelta(leads, prev.row.leads);
+        const dCont = calcDelta(cont, prev.row.contratos);
+        const dCpl = calcDelta(row?.cpl, prev.row.cpl, { invert: true, money: true });
+        const ups = [dLeads, dCont, dCpl].filter(d => d?.sentiment === 'up').length;
+        const downs = [dLeads, dCont, dCpl].filter(d => d?.sentiment === 'down').length;
+        let tone = 'insight-banner';
+        let verdict = 'misto';
+        if (ups > downs) { tone += ' ok'; verdict = 'evolução'; }
+        else if (downs > ups) { tone += ' warn'; verdict = 'involução'; }
+
+        insight.className = tone;
+        insight.innerHTML = `Vs <strong>${prev.label}</strong> · leitura de <strong>${verdict}</strong>: leads ${dLeads ? dLeads.arrow + ' ' + dLeads.absTxt : '—'}, contratos ${dCont ? dCont.arrow + ' ' + dCont.absTxt : '—'}, CPL ${dCpl ? dCpl.arrow + ' ' + dCpl.absTxt : '—'} (${dCpl?.word || '—'}).`;
       } else {
         insight.className = 'insight-banner';
         insight.innerHTML = `${MONTHS[selectedMonth].label} ${weekMeta.label}: <strong>${fmt(leads)}</strong> leads → <strong>${fmt(cont)}</strong> contratos · funil Lead→Contrato <strong>${fmtPct(rate(cont, leads))}</strong>`;
