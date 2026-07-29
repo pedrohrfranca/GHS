@@ -774,7 +774,7 @@
         { id: 'S1', label: 'S1', range: '1–7' },
         { id: 'S2', label: 'S2', range: '8–14' },
         { id: 'S3', label: 'S3', range: '15–21' },
-        { id: 'S4', label: 'S4', range: '22–27' },
+        { id: 'S4', label: 'S4', range: '22–28' },
         { id: 'S5', label: '3 dias', range: '29–31' }
       ]
     };
@@ -784,7 +784,7 @@
       jul: { key: 'jul', label: 'Julho', short: 'Jul' }
     };
 
-    // Atualizado com resultados reais · Julho parcial até 27/07
+    // Atualizado com resultados reais · Julho até S4 (28/07)
     const DATA = {
       jun: {
         S1: { leads: 177, investimento: 7708, agendamentos: 18, reunioes: 17, contratos: 1 },
@@ -796,8 +796,8 @@
       jul: {
         S1: { leads: 115, investimento: 7063, agendamentos: 12, reunioes: 10, contratos: 0 },
         S2: { leads: 173, investimento: 6959, agendamentos: 20, reunioes: 16, contratos: 0 },
-        S3: { leads: 154, investimento: 6914, agendamentos: 24, reunioes: 14, contratos: 1 },
-        S4: { leads: 125, investimento: 4770, agendamentos: 17, reunioes: 8,  contratos: 3 },
+        S3: { leads: 154, investimento: 6914, agendamentos: 24, reunioes: 14, contratos: 2 },
+        S4: { leads: 167, investimento: 6788, agendamentos: 22, reunioes: 18, contratos: 3 },
         S5: { leads: null, investimento: null, agendamentos: null, reunioes: null, contratos: null }
       }
     };
@@ -1015,7 +1015,7 @@
       const row = getSelectedRow();
       const prev = getPrevContext();
       const weekMeta = selectedWeek === 'TOTAL'
-        ? { label: 'Mês todo', range: selectedMonth === 'jun' ? '1–30' : '1–27' }
+        ? { label: 'Mês todo', range: selectedMonth === 'jun' ? '1–30' : '1–28' }
         : WEEK_DEFS[selectedMonth].find(w => w.id === selectedWeek);
 
       const vsLabel = prev?.label || '—';
