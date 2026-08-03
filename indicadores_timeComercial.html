@@ -508,7 +508,7 @@
       <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="logo logo-lg">
       <div class="title-line"></div>
       <h1 class="hero-title">Performance <span>Comercial</span></h1>
-      <p class="hero-meta">1º Semestre 2026 · Janeiro a Junho</p>
+      <p class="hero-meta">Janeiro a Julho 2026</p>
       <p class="hero-meta" style="margin-top:8px; font-size:14px;">Time Comercial · Luma · Luiz · Higor/Jéssika</p>
     </section>
 
@@ -519,28 +519,28 @@
         <div>
           <div class="brand brand-accent">Volume do Funil</div>
           <h2 class="slide-title">Agendamentos, reuniões e contratos por mês</h2>
-          <p class="slide-subtitle">Resumo consolidado do semestre</p>
+          <p class="slide-subtitle">Resumo consolidado Jan–Jul</p>
         </div>
       </div>
       <div class="kpi-grid hero">
         <div class="kpi-card highlight">
           <div class="kpi-label">Agendamentos</div>
-          <div class="kpi-value" id="kpi-agend">504</div>
-          <div class="kpi-detail">Total semestre</div>
+          <div class="kpi-value" id="kpi-agend">587</div>
+          <div class="kpi-detail">Total acumulado</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">Reuniões realizadas</div>
-          <div class="kpi-value" id="kpi-reun">319</div>
-          <div class="kpi-detail">63,3% de comparecimento</div>
+          <div class="kpi-value" id="kpi-reun">384</div>
+          <div class="kpi-detail">65,4% de comparecimento</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">Contratos fechados</div>
-          <div class="kpi-value" id="kpi-cont">48</div>
-          <div class="kpi-detail">Ganhos no semestre</div>
+          <div class="kpi-value" id="kpi-cont">55</div>
+          <div class="kpi-detail">Ganhos no período</div>
         </div>
         <div class="kpi-card highlight">
           <div class="kpi-label">Funil completo</div>
-          <div class="kpi-value" id="kpi-funil">9,5%</div>
+          <div class="kpi-value" id="kpi-funil">9,4%</div>
           <div class="kpi-detail">Ganhos / agendamentos</div>
         </div>
       </div>
@@ -632,7 +632,7 @@
           </div>
         </div>
       </div>
-      <p class="footnote" id="funnel-footnote">Taxa Reunião → Contrato calculada sobre reuniões efetivamente realizadas (319 no semestre)</p>
+      <p class="footnote" id="funnel-footnote">Taxa Reunião → Contrato calculada sobre reuniões efetivamente realizadas (384 no acumulado)</p>
     </section>
 
     <!-- Slide 6: Tabela -->
@@ -642,7 +642,7 @@
         <div>
           <div class="brand brand-accent">Dados Detalhados</div>
           <h2 class="slide-title">Tabela completa de indicadores</h2>
-          <p class="slide-subtitle">Volumes e taxas por executivo — Jan a Jun 2026</p>
+          <p class="slide-subtitle">Volumes e taxas por executivo — Jan a Jul 2026</p>
         </div>
       </div>
       <div class="data-table-wrap">
@@ -650,7 +650,7 @@
           <thead>
             <tr>
               <th>Métrica / Executivo</th>
-              <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
+              <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th>
               <th>Acumulado</th>
             </tr>
           </thead>
@@ -674,50 +674,50 @@
   </nav>
 
   <script>
-    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'];
     const EXECUTIVOS = ['Luma', 'Luiz', 'Higor/Jéssika'];
 
     const DATA = {
       agendamentos: {
-        Luma: [19, 25, 30, 40, 23, 33],
-        Luiz: [26, 45, 61, 55, 30, 30],
-        'Higor/Jéssika': [5, 3, 0, 29, 30, 20]
+        Luma: [19, 25, 30, 40, 23, 33, 41],
+        Luiz: [26, 45, 61, 55, 30, 30, 42],
+        'Higor/Jéssika': [5, 3, 0, 29, 30, 20, 0]
       },
-      agendamentosTotal: [50, 73, 91, 124, 83, 83],
+      agendamentosTotal: [50, 73, 91, 124, 83, 83, 83],
       reunioesRealizadas: {
-        Luma: [12, 14, 21, 11, 17, 21],
-        Luiz: [15, 30, 49, 39, 21, 29],
-        'Higor/Jéssika': [3, 0, 0, 14, 13, 10]
+        Luma: [12, 14, 21, 11, 17, 21, 30],
+        Luiz: [15, 30, 49, 39, 21, 29, 35],
+        'Higor/Jéssika': [3, 0, 0, 14, 13, 10, 0]
       },
-      reunioesTotal: [30, 44, 70, 64, 51, 60],
+      reunioesTotal: [30, 44, 70, 64, 51, 60, 65],
       contratos: {
-        Luma: [3, 4, 6, 2, 3, 1],
-        Luiz: [3, 7, 4, 4, 6, 4],
-        'Higor/Jéssika': [0, 1, 0, 0, 0, 0]
+        Luma: [3, 4, 6, 2, 3, 1, 4],
+        Luiz: [3, 7, 4, 4, 6, 4, 3],
+        'Higor/Jéssika': [0, 1, 0, 0, 0, 0, 0]
       },
-      contratosTotal: [6, 12, 10, 6, 9, 5],
+      contratosTotal: [6, 12, 10, 6, 9, 5, 7],
       taxaAgendReuniao: {
-        Luma: [63.2, 56.0, 70.0, 27.5, 73.9, 63.6],
-        Luiz: [57.7, 66.7, 80.3, 70.9, 70.0, 96.7],
-        'Higor/Jéssika': [60.0, 0, null, 48.3, 43.3, 50.0],
-        geral: [60.0, 60.3, 76.9, 51.6, 61.4, 72.3]
+        Luma: [63.2, 56.0, 70.0, 27.5, 73.9, 63.6, 73.2],
+        Luiz: [57.7, 66.7, 80.3, 70.9, 70.0, 96.7, 83.3],
+        'Higor/Jéssika': [60.0, 0, null, 48.3, 43.3, 50.0, null],
+        geral: [60.0, 60.3, 76.9, 51.6, 61.4, 72.3, 78.3]
       },
       taxaReuniaoContrato: {
-        Luma: [25.0, 28.6, 28.6, 18.2, 17.6, 4.8],
-        Luiz: [20.0, 23.3, 8.2, 10.3, 28.6, 13.8],
-        'Higor/Jéssika': [0, null, null, 0, 0, 0],
-        geral: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3]
+        Luma: [25.0, 28.6, 28.6, 18.2, 17.6, 4.8, 13.3],
+        Luiz: [20.0, 23.3, 8.2, 10.3, 28.6, 13.8, 8.6],
+        'Higor/Jéssika': [0, null, null, 0, 0, 0, null],
+        geral: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3, 10.8]
       },
       taxaFunilCompleto: {
-        Luma: [15.8, 16.0, 20.0, 5.0, 13.0, 3.0],
-        Luiz: [11.5, 15.6, 6.6, 7.3, 20.0, 13.3],
-        'Higor/Jéssika': [0, 33.3, null, 0, 0, 0],
-        geral: [12.0, 16.4, 11.0, 4.8, 10.8, 6.0]
+        Luma: [15.8, 16.0, 20.0, 5.0, 13.0, 3.0, 9.8],
+        Luiz: [11.5, 15.6, 6.6, 7.3, 20.0, 13.3, 7.1],
+        'Higor/Jéssika': [0, 33.3, null, 0, 0, 0, null],
+        geral: [12.0, 16.4, 11.0, 4.8, 10.8, 6.0, 8.4]
       },
       acumulado: {
-        taxaAgendReuniao: { Luma: 56.5, Luiz: 74.1, 'Higor/Jéssika': 46.0, geral: 63.3 },
-        taxaReuniaoContrato: { Luma: 19.8, Luiz: 15.3, 'Higor/Jéssika': 2.5, geral: 15.0 },
-        taxaFunilCompleto: { Luma: 11.2, Luiz: 11.3, 'Higor/Jéssika': 1.1, geral: 9.5 }
+        taxaAgendReuniao: { Luma: 59.7, Luiz: 75.4, 'Higor/Jéssika': 46.0, geral: 65.4 },
+        taxaReuniaoContrato: { Luma: 18.3, Luiz: 14.2, 'Higor/Jéssika': 2.5, geral: 14.3 },
+        taxaFunilCompleto: { Luma: 10.9, Luiz: 10.7, 'Higor/Jéssika': 1.1, geral: 9.4 }
       }
     };
 
@@ -1184,7 +1184,7 @@
       charts.evolRC.update();
 
       document.getElementById('funnel-footnote').textContent =
-        `Taxa Reunião → Contrato calculada sobre reuniões efetivamente realizadas (${fmt(getFunnelReunSemestreTotal())} no semestre${selectedFunnelExec !== 'geral' ? ' · ' + selectedFunnelExec : ''})`;
+        `Taxa Reunião → Contrato calculada sobre reuniões efetivamente realizadas (${fmt(getFunnelReunSemestreTotal())} no acumulado${selectedFunnelExec !== 'geral' ? ' · ' + selectedFunnelExec : ''})`;
     }
 
     function renderFunnelExecTabs() {
@@ -1212,7 +1212,7 @@
 
     function renderFunnelTabs() {
       const tabs = document.getElementById('funnel-tabs');
-      const items = [{ id: 'semestre', label: 'Semestre' }, ...MESES.map((m, i) => ({ id: i, label: m }))];
+      const items = [{ id: 'semestre', label: 'Acumulado' }, ...MESES.map((m, i) => ({ id: i, label: m }))];
       tabs.innerHTML = items.map(item => `
         <button class="month-tab ${item.id === 'semestre' ? 'semestre' : ''} ${item.id === selectedMonth ? 'active' : ''}"
           data-month="${item.id}">${item.label}</button>
@@ -1238,7 +1238,7 @@
       const pct = v => Math.max(10, (v / maxVal) * 100);
 
       const periodLabel = selectedMonth === 'semestre'
-        ? 'Semestre'
+        ? 'Acumulado'
         : MESES[selectedMonth] + ' 2026';
       const execLabel = selectedFunnelExec === 'geral'
         ? ''
@@ -1291,7 +1291,7 @@
       let rowIdx = 0;
 
       const addSection = title => {
-        html += `<tr class="section-header"><td colspan="8">${title}</td></tr>`;
+        html += `<tr class="section-header"><td colspan="9">${title}</td></tr>`;
       };
 
       const addVolumeRows = (label, key, totalKey) => {
@@ -1326,7 +1326,7 @@
         const geralVals = DATA[key].geral;
         html += `<tr class="${rowIdx++ % 2 === 0 ? 'row-odd' : 'row-even'}">
           <td class="metric-name">Geral</td>
-          ${geralVals.map(v => `<td>${fmtPct(v)}</td>`).join('')}
+          ${geralVals.map(v => `<td>${v === null ? '—' : fmtPct(v)}</td>`).join('')}
           <td class="col-total">${fmtPct(DATA.acumulado[acumKey].geral)}</td>
         </tr>`;
       };

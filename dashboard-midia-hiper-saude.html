@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grupo Hiper Saúde — Resultados de Mídia H1 2026</title>
+  <title>Grupo Hiper Saúde — Resultados de Mídia 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -647,7 +647,7 @@
       <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="logo logo-lg">
       <div class="title-line"></div>
       <h1 class="hero-title">Resultados de <span>Mídia Digital</span></h1>
-      <p class="hero-meta">1º Semestre 2026 · Janeiro a Junho</p>
+      <p class="hero-meta">Janeiro a Julho 2026</p>
       <p class="hero-meta" style="margin-top:8px; font-size:14px;">Apresentação Executiva · Diretoria</p>
     </section>
 
@@ -730,7 +730,7 @@
           </div>
         </div>
       </div>
-      <p class="footnote">Taxa Realizada → Venda calculada sobre reuniões efetivamente realizadas (319 no semestre)</p>
+      <p class="footnote">Taxa Realizada → Venda calculada sobre reuniões efetivamente realizadas (385 no acumulado)</p>
     </section>
 
     <!-- Slide 5: Tabela -->
@@ -740,7 +740,7 @@
         <div>
           <div class="brand brand-accent">Dados Detalhados</div>
           <h2 class="slide-title">Tabela completa de KPIs</h2>
-          <p class="slide-subtitle">Todos os indicadores por mês — Jan a Jun 2026</p>
+          <p class="slide-subtitle">Todos os indicadores por mês — Jan a Jul 2026</p>
         </div>
       </div>
       <div class="data-table-wrap">
@@ -748,7 +748,7 @@
           <thead>
             <tr>
               <th>Métrica</th>
-              <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th>
+              <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th>
               <th>Total / Média</th>
             </tr>
           </thead>
@@ -772,20 +772,20 @@
   </nav>
 
   <script>
-    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'];
 
     const DATA = {
-      leads: [1521, 1212, 540, 829, 845, 642],
-      reunioesAgendadas: [49, 73, 91, 124, 83, 83],
-      reunioesRealizadas: [30, 44, 70, 64, 51, 60],
-      conversoes: [6, 12, 10, 6, 9, 5],
-      investimento: [27646, 20900, 26363, 25344, 28811, 28785],
-      cpl: [18.18, 17.24, 46.93, 33.71, 34.17, 44.84],
-      custoSQL: [921.53, 286.30, 278.50, 225.40, 347.00, 346.80],
-      cac: [4607, 1742, 2534, 4658, 3201, 5757],
-      taxaLeadReuniao: [3.2, 6.0, 16.9, 15.0, 9.8, 12.9],
-      taxaReuniaoVenda: [12.2, 16.4, 11.0, 4.8, 10.8, 8.3],
-      taxaLeadVenda: [0.4, 1.0, 1.9, 0.7, 1.1, 0.78]
+      leads: [1521, 1212, 540, 829, 845, 642, 654],
+      reunioesAgendadas: [49, 73, 91, 124, 83, 83, 85],
+      reunioesRealizadas: [30, 44, 70, 64, 51, 60, 66],
+      conversoes: [6, 12, 10, 6, 9, 5, 7],
+      investimento: [27646, 20900, 26363, 25344, 28811, 28785, 30410],
+      cpl: [18.18, 17.24, 46.93, 33.71, 34.17, 44.84, 46.50],
+      custoSQL: [921.53, 286.30, 278.50, 225.40, 347.00, 346.80, 357.77],
+      cac: [4607, 1742, 2534, 4658, 3201, 5757, 4340],
+      taxaLeadReuniao: [3.2, 6.0, 16.9, 15.0, 9.8, 12.9, 13.0],
+      taxaReuniaoVenda: [12.2, 16.4, 11.0, 4.8, 10.8, 8.3, 8.2],
+      taxaLeadVenda: [0.4, 1.0, 1.9, 0.7, 1.1, 0.78, 1.07]
     };
 
     const sum = arr => arr.reduce((a, b) => a + b, 0);
@@ -1073,7 +1073,7 @@
               borderWidth: 2.5
             },
             {
-              label: `Média semestre (${mediaTaxaRealVenda.toString().replace('.', ',')}%)`,
+              label: `Média acumulado (${mediaTaxaRealVenda.toString().replace('.', ',')}%)`,
               data: MESES.map(() => mediaTaxaRealVenda),
               borderColor: chartColors.muted,
               borderDash: [6, 4],
@@ -1110,7 +1110,7 @@
                     const i = ctx.dataIndex;
                     return ` ${DATA.conversoes[i]} vendas / ${DATA.reunioesRealizadas[i]} realizadas (${ctx.formattedValue}%)`;
                   }
-                  return ` Média semestre: ${mediaTaxaRealVenda.toString().replace('.', ',')}%`;
+                  return ` Média acumulado: ${mediaTaxaRealVenda.toString().replace('.', ',')}%`;
                 }
               }
             }
@@ -1130,7 +1130,7 @@
 
     function renderFunnelTabs() {
       const tabs = document.getElementById('funnel-tabs');
-      const items = [{ id: 'semestre', label: 'Semestre' }, ...MESES.map((m, i) => ({ id: i, label: m }))];
+      const items = [{ id: 'semestre', label: 'Acumulado' }, ...MESES.map((m, i) => ({ id: i, label: m }))];
       tabs.innerHTML = items.map(item => `
         <button class="month-tab ${item.id === 'semestre' ? 'semestre' : ''} ${item.id === selectedMonth ? 'active' : ''}"
           data-month="${item.id}">${item.label}</button>
@@ -1177,7 +1177,7 @@
 
       document.getElementById('funnel-viz').innerHTML = `
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--hiper-blue);margin-bottom:4px;">
-          Funil ${selectedMonth === 'semestre' ? '— Semestre' : '— ' + MESES[selectedMonth] + ' 2026'}
+          Funil ${selectedMonth === 'semestre' ? '— Acumulado' : '— ' + MESES[selectedMonth] + ' 2026'}
         </div>
         <div class="funnel-step">
           <div class="funnel-label">Leads gerados</div>
