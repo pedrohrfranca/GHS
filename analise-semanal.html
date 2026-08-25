@@ -692,7 +692,7 @@
         <div>
           <div class="brand brand-accent">Evolução semanal</div>
           <h2 class="slide-title">Tendência S1 → S5</h2>
-          <p class="slide-subtitle">Comparativo visual Junho vs Julho nas mesmas faixas de dias</p>
+          <p class="slide-subtitle">Comparativo visual Junho × Julho × Agosto nas mesmas faixas de dias</p>
         </div>
       </div>
       <div class="tabs-row">
@@ -701,11 +701,12 @@
       <div class="charts-row three" style="flex:1;">
         <div class="panel" style="grid-column: 1 / -1;">
           <h3 id="trend-title">Leads por semana</h3>
-          <p class="caption">Volumes semanais · Junho (azul) × Julho (vermelho)</p>
+          <p class="caption" id="trend-caption">Volumes semanais · Junho (azul) × Julho (vermelho) × Agosto (verde)</p>
           <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
-          <div class="legend-row">
+          <div class="legend-row" id="trend-legend">
             <span><span class="legend-dot" style="background:var(--hiper-blue)"></span>Junho</span>
             <span><span class="legend-dot" style="background:var(--hiper-red)"></span>Julho</span>
+            <span><span class="legend-dot" style="background:#2F6B4F"></span>Agosto</span>
           </div>
         </div>
       </div>
@@ -718,7 +719,7 @@
         <div>
           <div class="brand brand-accent">Dados detalhados</div>
           <h2 class="slide-title">Tabela semanal completa</h2>
-          <p class="slide-subtitle">Estrutura pronta — substitua os placeholders pelos números reais</p>
+          <p class="slide-subtitle">Junho e julho fechados · agosto até S3 (21/08)</p>
         </div>
       </div>
       <div class="data-table-wrap">
@@ -776,15 +777,25 @@
         { id: 'S3', label: 'S3', range: '15–21' },
         { id: 'S4', label: 'S4', range: '22–28' },
         { id: 'S5', label: '3 dias', range: '29–31' }
+      ],
+      ago: [
+        { id: 'S1', label: 'S1', range: '1–7' },
+        { id: 'S2', label: 'S2', range: '8–14' },
+        { id: 'S3', label: 'S3', range: '15–21' },
+        { id: 'S4', label: 'S4', range: '22–28' },
+        { id: 'S5', label: '3 dias', range: '29–31' }
       ]
     };
 
     const MONTHS = {
       jun: { key: 'jun', label: 'Junho', short: 'Jun' },
-      jul: { key: 'jul', label: 'Julho', short: 'Jul' }
+      jul: { key: 'jul', label: 'Julho', short: 'Jul' },
+      ago: { key: 'ago', label: 'Agosto', short: 'Ago' }
     };
 
-    // Atualizado com resultados reais · Julho completo (até 31/07)
+    const MONTH_ORDER = Object.keys(MONTHS);
+
+    // Atualizado com resultados reais · Agosto até S3 (21/08)
     const DATA = {
       jun: {
         S1: { leads: 177, investimento: 7708, agendamentos: 18, reunioes: 17, contratos: 1 },
@@ -799,6 +810,13 @@
         S3: { leads: 154, investimento: 6914, agendamentos: 24, reunioes: 14, contratos: 2 },
         S4: { leads: 167, investimento: 6788, agendamentos: 22, reunioes: 18, contratos: 3 },
         S5: { leads: 45,  investimento: 2686, agendamentos: 7,  reunioes: 8,  contratos: 2 }
+      },
+      ago: {
+        S1: { leads: 134, investimento: 6103, agendamentos: 14, reunioes: 11, contratos: 2 },
+        S2: { leads: 131, investimento: 6489, agendamentos: 23, reunioes: 19, contratos: 0 },
+        S3: { leads: 217, investimento: 7091, agendamentos: 25, reunioes: 12, contratos: 2 },
+        S4: { leads: null, investimento: null, agendamentos: null, reunioes: null, contratos: null },
+        S5: { leads: null, investimento: null, agendamentos: null, reunioes: null, contratos: null }
       }
     };
 
@@ -845,8 +863,8 @@
 
     // ——— State ———
     let currentSlide = 0;
-    let selectedMonth = 'jun';
-    let selectedWeek = 'S1';
+    let selectedMonth = 'ago';
+    let selectedWeek = 'S3';
     let selectedMetric = 'leads';
     let trendChart = null;
 
@@ -929,16 +947,26 @@
       return enrich(DATA[selectedMonth][selectedWeek]);
     }
 
+    function prevMonthKey(monthKey) {
+      const i = MONTH_ORDER.indexOf(monthKey);
+      return i > 0 ? MONTH_ORDER[i - 1] : null;
+    }
+
+    function monthFullRange(monthKey) {
+      const weeks = WEEK_DEFS[monthKey];
+      const end = weeks[weeks.length - 1].range.split('–')[1];
+      return `1–${end}`;
+    }
+
     /** Semana (ou mês) imediatamente anterior para comparação WoW */
     function getPrevContext() {
       if (selectedWeek === 'TOTAL') {
-        if (selectedMonth === 'jul') {
-          return {
-            label: 'Junho',
-            row: sumMonth('jun')
-          };
-        }
-        return null;
+        const prevKey = prevMonthKey(selectedMonth);
+        if (!prevKey) return null;
+        return {
+          label: MONTHS[prevKey].label,
+          row: sumMonth(prevKey)
+        };
       }
 
       const weeks = WEEK_DEFS[selectedMonth];
@@ -954,13 +982,14 @@
         };
       }
 
-      // S1 de julho → última semana com dados de junho
-      if (selectedMonth === 'jul') {
-        for (let i = WEEK_DEFS.jun.length - 1; i >= 0; i--) {
-          const w = WEEK_DEFS.jun[i];
-          const row = enrich(DATA.jun[w.id]);
+      // S1 → última semana com dados do mês anterior
+      const prevKey = prevMonthKey(selectedMonth);
+      if (prevKey) {
+        for (let i = WEEK_DEFS[prevKey].length - 1; i >= 0; i--) {
+          const w = WEEK_DEFS[prevKey][i];
+          const row = enrich(DATA[prevKey][w.id]);
           if (row?.leads != null || row?.agendamentos != null) {
-            return { label: `Jun ${w.label}`, row };
+            return { label: `${MONTHS[prevKey].short} ${w.label}`, row };
           }
         }
       }
@@ -1015,7 +1044,7 @@
       const row = getSelectedRow();
       const prev = getPrevContext();
       const weekMeta = selectedWeek === 'TOTAL'
-        ? { label: 'Mês todo', range: selectedMonth === 'jun' ? '1–30' : '1–28' }
+        ? { label: 'Mês todo', range: monthFullRange(selectedMonth) }
         : WEEK_DEFS[selectedMonth].find(w => w.id === selectedWeek);
 
       const vsLabel = prev?.label || '—';
@@ -1203,36 +1232,36 @@
       const metric = METRICS.find(m => m.id === selectedMetric);
       document.getElementById('trend-title').textContent = `${metric.label} por semana`;
 
-      const labels = WEEK_DEFS.jun.map(w => `${w.label}\n(${w.range})`);
-      const junData = seriesFor('jun', selectedMetric);
-      const julData = seriesFor('jul', selectedMetric);
+      const colors = {
+        jun: 'rgba(61, 93, 169, 0.75)',
+        jul: 'rgba(215, 48, 39, 0.75)',
+        ago: 'rgba(47, 107, 79, 0.75)'
+      };
+
+      const series = MONTH_ORDER.map(key => ({
+        key,
+        label: MONTHS[key].label,
+        data: seriesFor(key, selectedMetric),
+        color: colors[key]
+      }));
+
       const isMoney = metric.money;
+      const empty = series.every(s => s.data.every(v => v == null));
 
       const ctx = document.getElementById('chartTrend');
       if (trendChart) trendChart.destroy();
-
-      const empty = junData.every(v => v == null) && julData.every(v => v == null);
 
       trendChart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: WEEK_DEFS.jun.map(w => w.label),
-          datasets: [
-            {
-              label: 'Junho',
-              data: junData,
-              backgroundColor: 'rgba(61, 93, 169, 0.75)',
-              borderRadius: 6,
-              maxBarThickness: 48
-            },
-            {
-              label: 'Julho',
-              data: julData,
-              backgroundColor: 'rgba(215, 48, 39, 0.75)',
-              borderRadius: 6,
-              maxBarThickness: 48
-            }
-          ]
+          datasets: series.map(s => ({
+            label: s.label,
+            data: s.data,
+            backgroundColor: s.color,
+            borderRadius: 6,
+            maxBarThickness: 36
+          }))
         },
         options: {
           responsive: true,
@@ -1242,7 +1271,7 @@
             datalabels: {
               anchor: 'end',
               align: 'top',
-              font: { weight: '800', size: 15, family: 'Nunito Sans' },
+              font: { weight: '800', size: 13, family: 'Nunito Sans' },
               color: '#4F4F4F',
               formatter: v => {
                 if (v == null) return '';
