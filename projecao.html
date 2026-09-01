@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grupo Hiper Saúde — Projeção de Funil H2 2026</title>
+  <title>Grupo Hiper Saúde — Projeção de Funil 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -811,7 +811,7 @@
       <div class="title-line"></div>
       <h1 class="hero-title">Projeção de <span>Funil</span></h1>
       <p class="hero-meta">Onde mexer para melhorar a conversão dos executivos</p>
-      <p class="hero-meta" style="margin-top:8px; font-size:14px;">Baseline H1 2026 · Cenários para H2</p>
+      <p class="hero-meta" style="margin-top:8px; font-size:14px;">Baseline H1 2026 · Agosto fechado · Cenários para o mês seguinte</p>
     </section>
 
     <!-- 1: Simulador -->
@@ -821,7 +821,7 @@
         <div>
           <div class="brand brand-accent">Simulador</div>
           <h2 class="slide-title">Monte a meta de conversão do time</h2>
-          <p class="slide-subtitle">Histórico Jan–Jul intacto · use Meta mês seguinte para brincar com os números</p>
+          <p class="slide-subtitle">Histórico Jan–Ago intacto · use Meta mês seguinte para brincar com os números</p>
         </div>
       </div>
       <div class="month-tabs" id="sim-period-tabs"></div>
@@ -977,22 +977,28 @@
   </nav>
 
   <script>
-    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'];
+    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'];
     const LAST_IDX = MESES.length - 1;
+    const MONTH_FULL = {
+      Jan: 'janeiro', Fev: 'fevereiro', Mar: 'março', Abr: 'abril',
+      Mai: 'maio', Jun: 'junho', Jul: 'julho', Ago: 'agosto'
+    };
+    const LAST_MONTH_SHORT = MESES[LAST_IDX];
+    const LAST_MONTH_LABEL = MONTH_FULL[LAST_MONTH_SHORT];
     const AGEND = 504;
     const BASE_REUN = 319;
     const BASE_CONT = 48;
 
     const MONTHLY = {
-      leads: [1521, 1212, 540, 829, 845, 642, 654],
-      agend: [50, 73, 91, 124, 83, 83, 85],
-      reun: [30, 44, 70, 64, 51, 60, 66],
-      cont: [6, 12, 10, 6, 9, 5, 7],
-      ar: [60.0, 60.3, 76.9, 51.6, 61.4, 72.3, 77.6],
-      rc: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3, 10.6]
+      leads: [1521, 1212, 540, 829, 845, 642, 654, 753],
+      agend: [50, 73, 91, 124, 83, 83, 85, 94],
+      reun: [30, 44, 70, 64, 51, 60, 66, 58],
+      cont: [6, 12, 10, 6, 9, 5, 7, 7],
+      ar: [60.0, 60.3, 76.9, 51.6, 61.4, 72.3, 77.6, 61.7],
+      rc: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3, 10.6, 12.1]
     };
 
-    // Semestre = H1 (Jan–Jun); Julho entra nos tabs mensais e na meta
+    // Semestre = H1 (Jan–Jun); meses seguintes entram nos tabs mensais e na meta
     const LEADS = MONTHLY.leads.slice(0, 6).reduce((a, b) => a + b, 0);
 
     const fmt = n => Math.round(n).toLocaleString('pt-BR');
@@ -1030,7 +1036,7 @@
         return {
           label: 'Meta mês seguinte',
           mode: 'meta',
-          refLabel: 'Jul 2026 (ref.)',
+          refLabel: LAST_MONTH_SHORT + ' 2026 (ref.)',
           leads: refLeads,
           agend: refAgend,
           reun: refReun,
@@ -1157,13 +1163,13 @@
 
       if (base.mode === 'meta') {
         document.getElementById('sim-leads-bench').textContent =
-          `Referência Jul: ${fmt(base.leads)} · brinque livremente (${fmt(minLeads)}–${fmt(maxLeads)}) · histórico intacto`;
+          `Referência ${LAST_MONTH_SHORT}: ${fmt(base.leads)} · brinque livremente (${fmt(minLeads)}–${fmt(maxLeads)}) · histórico intacto`;
         document.getElementById('sim-agend-bench').textContent =
-          `Referência Jul: ${fmt(base.agend)} · Lead → Agend jul ${fmtPct(base.la)}`;
+          `Referência ${LAST_MONTH_SHORT}: ${fmt(base.agend)} · Lead → Agend ${LAST_MONTH_LABEL} ${fmtPct(base.la)}`;
         document.getElementById('sim-ar-bench').textContent =
-          `Jul real ${fmtPct(base.ar)} · meta sugerida 70% · Luiz 74,1%`;
+          `${LAST_MONTH_SHORT} real ${fmtPct(base.ar)} · meta sugerida 70% · Luiz 74,1%`;
         document.getElementById('sim-rc-bench').textContent =
-          `Jul real ${fmtPct(base.rc)} · meta sugerida 18% · Luma 19,8%`;
+          `${LAST_MONTH_SHORT} real ${fmtPct(base.rc)} · meta sugerida 18% · Luma 19,8%`;
       } else {
         document.getElementById('sim-leads-bench').textContent =
           `Real do período: ${fmt(base.leads)} · faixa ${fmt(minLeads)}–${fmt(maxLeads)}`;
@@ -1200,10 +1206,10 @@
       content.style.display = 'flex';
 
       const isMeta = p.base.mode === 'meta';
-      const baseTitle = isMeta ? (p.base.refLabel || 'Jul 2026 (ref.)') : p.base.label;
+      const baseTitle = isMeta ? (p.base.refLabel || `${LAST_MONTH_SHORT} 2026 (ref.)`) : p.base.label;
 
       document.getElementById('proj-subtitle').textContent = isMeta
-        ? 'Meta do mês seguinte vs. referência de julho · histórico intacto'
+        ? `Meta do mês seguinte vs. referência de ${LAST_MONTH_LABEL} · histórico intacto`
         : `Comparativo real vs. cenário simulado · ${p.base.label}`;
       document.getElementById('proj-base-label').textContent = isMeta
         ? `Referência — ${baseTitle}`
@@ -1232,26 +1238,26 @@
 
       document.getElementById('proj-delta').textContent = fmtSigned(p.delta);
       document.getElementById('proj-delta-detail').textContent = isMeta
-        ? `vs. ${p.base.cont} contratos de jul`
+        ? `vs. ${p.base.cont} contratos de ${LAST_MONTH_LABEL}`
         : `vs. ${p.base.cont} contratos reais`;
       document.getElementById('proj-growth').textContent =
         p.base.cont > 0 ? fmtPct(p.delta / p.base.cont * 100) : '—';
       document.getElementById('proj-ar').textContent = fmtPct(p.ar);
       document.getElementById('proj-ar-detail').textContent = isMeta
-        ? `jul ${fmtPct(p.base.ar)} · ${fmtSigned(p.arDelta)} pp`
+        ? `${LAST_MONTH_LABEL} ${fmtPct(p.base.ar)} · ${fmtSigned(p.arDelta)} pp`
         : `real ${fmtPct(p.base.ar)} · ${fmtSigned(p.arDelta)} pp`;
       document.getElementById('proj-rc').textContent = fmtPct(p.rc);
       document.getElementById('proj-rc-detail').textContent = isMeta
-        ? `jul ${fmtPct(p.base.rc)} · ${fmtSigned(p.rcDelta)} pp`
+        ? `${LAST_MONTH_LABEL} ${fmtPct(p.base.rc)} · ${fmtSigned(p.rcDelta)} pp`
         : `real ${fmtPct(p.base.rc)} · ${fmtSigned(p.rcDelta)} pp`;
 
       const volPart = (p.leadsDelta === 0 && p.agendDelta === 0)
-        ? 'mantendo o volume de julho'
-        : `com ${fmtSigned(p.leadsDelta)} leads e ${fmtSigned(p.agendDelta)} agendas vs julho`;
+        ? `mantendo o volume de ${LAST_MONTH_LABEL}`
+        : `com ${fmtSigned(p.leadsDelta)} leads e ${fmtSigned(p.agendDelta)} agendas vs ${LAST_MONTH_LABEL}`;
 
       let leitura = '';
       if (isMeta) {
-        leitura = `Meta montada para o <strong>mês seguinte</strong> ${volPart}: <strong>${fmt(p.cont)} contratos</strong> (${fmtSigned(p.delta)} vs julho). Funil Lead→Contrato ${fmtPct2(p.funil)} (Lead→Agend ${fmtPct(p.la)}). Os meses Jan–Jul permanecem inalterados.`;
+        leitura = `Meta montada para o <strong>mês seguinte</strong> ${volPart}: <strong>${fmt(p.cont)} contratos</strong> (${fmtSigned(p.delta)} vs ${LAST_MONTH_LABEL}). Funil Lead→Contrato ${fmtPct2(p.funil)} (Lead→Agend ${fmtPct(p.la)}). Os meses Jan–Ago permanecem inalterados.`;
       } else if (Math.abs(p.delta) < 0.5 && p.leadsDelta === 0 && p.agendDelta === 0 && Math.abs(p.arDelta) < 0.05 && Math.abs(p.rcDelta) < 0.05) {
         leitura = `Cenário idêntico ao real de <strong>${p.base.label}</strong>. Ajuste volume ou taxas no Simulador e gere novamente para ver impacto.`;
       } else if (p.delta > 0) {
@@ -1266,7 +1272,7 @@
       const v = getSimValues();
       const { base, leads, agend, ar, rc, la, reun, cont, funil, delta, leadsDelta, agendDelta } = v;
       const isMeta = base.mode === 'meta';
-      const periodRef = isMeta ? 'jul' : (simPeriod === 'semestre' ? 'H1' : MESES[simPeriod]);
+      const periodRef = isMeta ? LAST_MONTH_SHORT.toLowerCase() : (simPeriod === 'semestre' ? 'H1' : MESES[simPeriod]);
 
       // Mantém agendamentos dentro do teto de leads (e da faixa do período)
       const agendInput = document.getElementById('sim-agend');
@@ -1275,7 +1281,7 @@
       if (+agendInput.value > leads) agendInput.value = leads;
 
       document.getElementById('sim-volume-caption').textContent = isMeta
-        ? `Referência Jul: ${fmt(base.leads)} leads · ${fmt(base.agend)} agendas · ${base.cont} contratos — histórico intacto`
+        ? `Referência ${LAST_MONTH_SHORT}: ${fmt(base.leads)} leads · ${fmt(base.agend)} agendas · ${base.cont} contratos — histórico intacto`
         : `Baseline ${base.label}: ${fmt(base.leads)} leads · ${fmt(base.agend)} agendas · ${base.reun} reuniões · ${base.cont} contratos`;
       document.getElementById('sim-funnel-caption').textContent = isMeta
         ? 'Meta do mês seguinte · Lead → Agend → Reunião → Contrato'
@@ -1290,7 +1296,7 @@
 
       if (base.mode === 'meta') {
         document.getElementById('sim-agend-bench').textContent =
-          `Referência Jul: ${fmt(base.agend)} · Lead → Agend atual ${fmtPct(la)} (jul ${fmtPct(base.la)})`;
+          `Referência ${LAST_MONTH_SHORT}: ${fmt(base.agend)} · Lead → Agend atual ${fmtPct(la)} (${LAST_MONTH_LABEL} ${fmtPct(base.la)})`;
       } else {
         document.getElementById('sim-agend-bench').textContent =
           `Real do período: ${fmt(base.agend)} · Lead → Agend atual ${fmtPct(la)} (real ${fmtPct(base.la)})`;
@@ -1325,12 +1331,12 @@
       `;
 
       const volNote = leadsDelta === 0 && agendDelta === 0
-        ? 'mesmo volume que jul'
-        : `${fmtSigned(leadsDelta)} leads · ${fmtSigned(agendDelta)} agendas vs jul`;
+        ? `mesmo volume que ${LAST_MONTH_LABEL}`
+        : `${fmtSigned(leadsDelta)} leads · ${fmtSigned(agendDelta)} agendas vs ${LAST_MONTH_LABEL}`;
 
       let msg = '';
       if (isMeta) {
-        msg = `Montando a <strong>meta do mês seguinte</strong> (${volNote}): <strong>${fmt(cont)} contratos</strong> (${fmtSigned(delta)} vs julho). Funil Lead→Contrato ${fmtPct2(funil)}.`;
+        msg = `Montando a <strong>meta do mês seguinte</strong> (${volNote}): <strong>${fmt(cont)} contratos</strong> (${fmtSigned(delta)} vs ${LAST_MONTH_LABEL}). Funil Lead→Contrato ${fmtPct2(funil)}.`;
       } else if (Math.abs(delta) < 0.5 && leadsDelta === 0 && agendDelta === 0) {
         msg = `Baseline de <strong>${base.label}</strong>: ${fmt(leads)} leads → ${fmt(agend)} agendas → <strong>${base.cont} contratos</strong> (funil ${fmtPct2(base.fc)}). Mexa nos controles e clique em <strong>Gerar projeção</strong>.`;
       } else if (delta < 0) {

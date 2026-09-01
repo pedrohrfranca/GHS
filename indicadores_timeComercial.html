@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grupo Hiper Saúde — Performance Comercial H1 2026</title>
+  <title>Grupo Hiper Saúde — Performance Comercial Jan–Ago 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -368,11 +368,11 @@
       width: 100%;
       border-collapse: separate;
       border-spacing: 0 8px;
-      font-size: 13px;
+      font-size: 12px;
     }
 
     #kpi-table th, #kpi-table td {
-      padding: 12px 14px;
+      padding: 10px 10px;
       text-align: right;
       border: none;
     }
@@ -508,7 +508,7 @@
       <img src="logo-hiper-saude.png" alt="Grupo Hiper Saúde" class="logo logo-lg">
       <div class="title-line"></div>
       <h1 class="hero-title">Performance <span>Comercial</span></h1>
-      <p class="hero-meta">Janeiro a Julho 2026</p>
+      <p class="hero-meta">Janeiro a Agosto 2026</p>
       <p class="hero-meta" style="margin-top:8px; font-size:14px;">Time Comercial · Luma · Luiz · Higor/Jéssika</p>
     </section>
 
@@ -519,28 +519,28 @@
         <div>
           <div class="brand brand-accent">Volume do Funil</div>
           <h2 class="slide-title">Agendamentos, reuniões e contratos por mês</h2>
-          <p class="slide-subtitle">Resumo consolidado Jan–Jul</p>
+          <p class="slide-subtitle">Resumo consolidado Jan–Ago</p>
         </div>
       </div>
       <div class="kpi-grid hero">
         <div class="kpi-card highlight">
           <div class="kpi-label">Agendamentos</div>
-          <div class="kpi-value" id="kpi-agend">587</div>
+          <div class="kpi-value" id="kpi-agend">681</div>
           <div class="kpi-detail">Total acumulado</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">Reuniões realizadas</div>
-          <div class="kpi-value" id="kpi-reun">384</div>
-          <div class="kpi-detail">65,4% de comparecimento</div>
+          <div class="kpi-value" id="kpi-reun">442</div>
+          <div class="kpi-detail">64,9% de comparecimento</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">Contratos fechados</div>
-          <div class="kpi-value" id="kpi-cont">55</div>
+          <div class="kpi-value" id="kpi-cont">62</div>
           <div class="kpi-detail">Ganhos no período</div>
         </div>
         <div class="kpi-card highlight">
           <div class="kpi-label">Funil completo</div>
-          <div class="kpi-value" id="kpi-funil">9,4%</div>
+          <div class="kpi-value" id="kpi-funil">9,1%</div>
           <div class="kpi-detail">Ganhos / agendamentos</div>
         </div>
       </div>
@@ -632,7 +632,7 @@
           </div>
         </div>
       </div>
-      <p class="footnote" id="funnel-footnote">Taxa Reunião → Contrato calculada sobre reuniões efetivamente realizadas (384 no acumulado)</p>
+      <p class="footnote" id="funnel-footnote">Taxa Reunião → Contrato calculada sobre reuniões efetivamente realizadas (442 no acumulado)</p>
     </section>
 
     <!-- Slide 6: Tabela -->
@@ -642,7 +642,7 @@
         <div>
           <div class="brand brand-accent">Dados Detalhados</div>
           <h2 class="slide-title">Tabela completa de indicadores</h2>
-          <p class="slide-subtitle">Volumes e taxas por executivo — Jan a Jul 2026</p>
+          <p class="slide-subtitle">Volumes e taxas por executivo — Jan a Ago 2026</p>
         </div>
       </div>
       <div class="data-table-wrap">
@@ -650,7 +650,7 @@
           <thead>
             <tr>
               <th>Métrica / Executivo</th>
-              <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th>
+              <th>Jan</th><th>Fev</th><th>Mar</th><th>Abr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Ago</th>
               <th>Acumulado</th>
             </tr>
           </thead>
@@ -674,50 +674,50 @@
   </nav>
 
   <script>
-    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul'];
+    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago'];
     const EXECUTIVOS = ['Luma', 'Luiz', 'Higor/Jéssika'];
 
     const DATA = {
       agendamentos: {
-        Luma: [19, 25, 30, 40, 23, 33, 41],
-        Luiz: [26, 45, 61, 55, 30, 30, 42],
-        'Higor/Jéssika': [5, 3, 0, 29, 30, 20, 0]
+        Luma: [19, 25, 30, 40, 23, 33, 41, 57],
+        Luiz: [26, 45, 61, 55, 30, 30, 42, 37],
+        'Higor/Jéssika': [5, 3, 0, 29, 30, 20, 0, 0]
       },
-      agendamentosTotal: [50, 73, 91, 124, 83, 83, 83],
+      agendamentosTotal: [50, 73, 91, 124, 83, 83, 83, 94],
       reunioesRealizadas: {
-        Luma: [12, 14, 21, 11, 17, 21, 30],
-        Luiz: [15, 30, 49, 39, 21, 29, 35],
-        'Higor/Jéssika': [3, 0, 0, 14, 13, 10, 0]
+        Luma: [12, 14, 21, 11, 17, 21, 30, 37],
+        Luiz: [15, 30, 49, 39, 21, 29, 35, 21],
+        'Higor/Jéssika': [3, 0, 0, 14, 13, 10, 0, 0]
       },
-      reunioesTotal: [30, 44, 70, 64, 51, 60, 65],
+      reunioesTotal: [30, 44, 70, 64, 51, 60, 65, 58],
       contratos: {
-        Luma: [3, 4, 6, 2, 3, 1, 4],
-        Luiz: [3, 7, 4, 4, 6, 4, 3],
-        'Higor/Jéssika': [0, 1, 0, 0, 0, 0, 0]
+        Luma: [3, 4, 6, 2, 3, 1, 4, 3],
+        Luiz: [3, 7, 4, 4, 6, 4, 3, 4],
+        'Higor/Jéssika': [0, 1, 0, 0, 0, 0, 0, 0]
       },
-      contratosTotal: [6, 12, 10, 6, 9, 5, 7],
+      contratosTotal: [6, 12, 10, 6, 9, 5, 7, 7],
       taxaAgendReuniao: {
-        Luma: [63.2, 56.0, 70.0, 27.5, 73.9, 63.6, 73.2],
-        Luiz: [57.7, 66.7, 80.3, 70.9, 70.0, 96.7, 83.3],
-        'Higor/Jéssika': [60.0, 0, null, 48.3, 43.3, 50.0, null],
-        geral: [60.0, 60.3, 76.9, 51.6, 61.4, 72.3, 78.3]
+        Luma: [63.2, 56.0, 70.0, 27.5, 73.9, 63.6, 73.2, 64.9],
+        Luiz: [57.7, 66.7, 80.3, 70.9, 70.0, 96.7, 83.3, 56.8],
+        'Higor/Jéssika': [60.0, 0, null, 48.3, 43.3, 50.0, null, null],
+        geral: [60.0, 60.3, 76.9, 51.6, 61.4, 72.3, 78.3, 61.7]
       },
       taxaReuniaoContrato: {
-        Luma: [25.0, 28.6, 28.6, 18.2, 17.6, 4.8, 13.3],
-        Luiz: [20.0, 23.3, 8.2, 10.3, 28.6, 13.8, 8.6],
-        'Higor/Jéssika': [0, null, null, 0, 0, 0, null],
-        geral: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3, 10.8]
+        Luma: [25.0, 28.6, 28.6, 18.2, 17.6, 4.8, 13.3, 8.1],
+        Luiz: [20.0, 23.3, 8.2, 10.3, 28.6, 13.8, 8.6, 19.0],
+        'Higor/Jéssika': [0, null, null, 0, 0, 0, null, null],
+        geral: [20.0, 27.3, 14.3, 9.4, 17.6, 8.3, 10.8, 12.1]
       },
       taxaFunilCompleto: {
-        Luma: [15.8, 16.0, 20.0, 5.0, 13.0, 3.0, 9.8],
-        Luiz: [11.5, 15.6, 6.6, 7.3, 20.0, 13.3, 7.1],
-        'Higor/Jéssika': [0, 33.3, null, 0, 0, 0, null],
-        geral: [12.0, 16.4, 11.0, 4.8, 10.8, 6.0, 8.4]
+        Luma: [15.8, 16.0, 20.0, 5.0, 13.0, 3.0, 9.8, 5.3],
+        Luiz: [11.5, 15.6, 6.6, 7.3, 20.0, 13.3, 7.1, 10.8],
+        'Higor/Jéssika': [0, 33.3, null, 0, 0, 0, null, null],
+        geral: [12.0, 16.4, 11.0, 4.8, 10.8, 6.0, 8.4, 7.4]
       },
       acumulado: {
-        taxaAgendReuniao: { Luma: 59.7, Luiz: 75.4, 'Higor/Jéssika': 46.0, geral: 65.4 },
-        taxaReuniaoContrato: { Luma: 18.3, Luiz: 14.2, 'Higor/Jéssika': 2.5, geral: 14.3 },
-        taxaFunilCompleto: { Luma: 10.9, Luiz: 10.7, 'Higor/Jéssika': 1.1, geral: 9.4 }
+        taxaAgendReuniao: { Luma: 60.8, Luiz: 73.3, 'Higor/Jéssika': 46.0, geral: 64.9 },
+        taxaReuniaoContrato: { Luma: 16.0, Luiz: 14.6, 'Higor/Jéssika': 2.5, geral: 14.0 },
+        taxaFunilCompleto: { Luma: 9.7, Luiz: 10.7, 'Higor/Jéssika': 1.1, geral: 9.1 }
       }
     };
 
@@ -1291,7 +1291,7 @@
       let rowIdx = 0;
 
       const addSection = title => {
-        html += `<tr class="section-header"><td colspan="9">${title}</td></tr>`;
+        html += `<tr class="section-header"><td colspan="10">${title}</td></tr>`;
       };
 
       const addVolumeRows = (label, key, totalKey) => {

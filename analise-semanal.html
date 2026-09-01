@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Grupo Hiper Saúde — Análise Semanal Jun–Jul 2026</title>
+  <title>Grupo Hiper Saúde — Análise Semanal Jun–Ago 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -537,7 +537,8 @@
       display: flex;
       gap: 16px;
       margin-top: 12px;
-      font-size: 12px;
+      font-size: 16px;
+      font-weight: 700 !important;
       color: var(--text-muted);
     }
 
@@ -719,7 +720,7 @@
         <div>
           <div class="brand brand-accent">Dados detalhados</div>
           <h2 class="slide-title">Tabela semanal completa</h2>
-          <p class="slide-subtitle">Junho e julho fechados · agosto até S3 (21/08)</p>
+          <p class="slide-subtitle">Junho, julho e agosto fechados · S1–S5</p>
         </div>
       </div>
       <div class="data-table-wrap">
@@ -795,7 +796,7 @@
 
     const MONTH_ORDER = Object.keys(MONTHS);
 
-    // Atualizado com resultados reais · Agosto até S3 (21/08)
+    // Atualizado com resultados reais · Agosto fechado (S1–S5)
     const DATA = {
       jun: {
         S1: { leads: 177, investimento: 7708, agendamentos: 18, reunioes: 17, contratos: 1 },
@@ -815,8 +816,8 @@
         S1: { leads: 134, investimento: 6103, agendamentos: 14, reunioes: 11, contratos: 2 },
         S2: { leads: 131, investimento: 6489, agendamentos: 23, reunioes: 19, contratos: 0 },
         S3: { leads: 217, investimento: 7091, agendamentos: 25, reunioes: 12, contratos: 2 },
-        S4: { leads: null, investimento: null, agendamentos: null, reunioes: null, contratos: null },
-        S5: { leads: null, investimento: null, agendamentos: null, reunioes: null, contratos: null }
+        S4: { leads: 206, investimento: 7346, agendamentos: 27, reunioes: 16, contratos: 2 },
+        S5: { leads: 65,  investimento: 2967, agendamentos: 5,  reunioes: 0,  contratos: 1 }
       }
     };
 
@@ -864,7 +865,7 @@
     // ——— State ———
     let currentSlide = 0;
     let selectedMonth = 'ago';
-    let selectedWeek = 'S3';
+    let selectedWeek = 'TOTAL';
     let selectedMetric = 'leads';
     let trendChart = null;
 
@@ -1259,8 +1260,10 @@
             label: s.label,
             data: s.data,
             backgroundColor: s.color,
-            borderRadius: 6,
-            maxBarThickness: 36
+            borderRadius: 5,
+            maxBarThickness: 42,
+            categoryPercentage: 0.52,
+            barPercentage: 0.98
           }))
         },
         options: {
